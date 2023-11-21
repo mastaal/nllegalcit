@@ -8,9 +8,11 @@
     SPDX-License-Identifier: EUPL-1.2
 """
 
-from enum import Enum
 import logging
 import re
+
+from enum import Enum
+from importlib.resources import files
 
 from lark import Lark, Visitor, ParseTree
 
@@ -19,9 +21,7 @@ from nllegalcit.errors import CitationParseException
 logger = logging.getLogger(__name__)
 re_whitespace: re.Pattern = re.compile(r"\s+")
 
-# TODO: Maybe it's more practical to just move the grammars to inline Python strings?
-with open("./nllegalcit/grammars/kamerstukken.lark", "rt", encoding="utf-8") as gf:
-    kamerstukken_grammar = gf.read()
+kamerstukken_grammar = files("nllegalcit.grammars").joinpath("kamerstukken.lark").read_text()
 
 
 class KamerstukCitation:

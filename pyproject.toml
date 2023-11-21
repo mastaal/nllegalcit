@@ -14,3 +14,16 @@ requires-python = ">=3.10"
 classifiers = [
     "License :: OSI Approved :: European Union Public Licence 1.2 (EUPL 1.2)"
 ]
+
+[project.urls]
+Homepage = "https://github.com/mastaal/nllegalcit"
+Issues = "https://github.com/mastaal/nllegalcit/issues"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["."]
+
+[tool.setuptools.package-data]
+"nllegalcit.grammars" = ["*.lark"]
