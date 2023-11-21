@@ -1,0 +1,14 @@
+-r requirements.txt
+
+# Improve code quality
+pylint
+flake8
+mypy
+
+# Analyze license compliance of dependencies
+pip-licenses>=4.3.3
+
+# Analyze dependency tree
+pipdeptree>=2.13.0
+
+build
