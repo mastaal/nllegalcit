@@ -8,6 +8,8 @@
     SPDX-License-Identifier: EUPL-1.2
 """
 
+# pylint: disable=line-too-long
+
 import unittest
 
 from nllegalcit.kamerstukken import KamerstukCitation, parse_kamerstukcitation
