@@ -1,5 +1,11 @@
 # nllegalcit
 
+![GitHub License](https://img.shields.io/github/license/mastaal/nllegalcit?color=%23003399)
+![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/mastaal/nllegalcit/pytest.yml?label=tests)
+![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/mastaal/nllegalcit/pylint.yml?label=linter)
+![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/mastaal/nllegalcit/mypy.yml?label=type%20checking)
+
+
 Python library to find citations to Dutch legal documents in natural language text.
 
 This library is partially based on the [linkextractor](https://gitlab.com/koop/ld/lx/linkextractor) developed by [KOOP](https://www.koopoverheid.nl/) to implement the Linked Data Overheid (LiDO). The aim of `nllegalcit` is to provide a more generally accessible way to recognize Dutch legal citations in natural language text.
