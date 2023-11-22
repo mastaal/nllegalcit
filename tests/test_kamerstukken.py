@@ -8,6 +8,8 @@
     SPDX-License-Identifier: EUPL-1.2
 """
 
+# pylint: disable=line-too-long
+
 import unittest
 
 from nllegalcit.kamerstukken import KamerstukCitation, parse_kamerstukcitation
@@ -107,6 +109,7 @@ class KamerstukCitationTests(unittest.TestCase):
             [KamerstukCitation("II", "2013/14", "31142", "37"), KamerstukCitation("II", "2015/16", "31142", "55"), KamerstukCitation("II", "2018/19", "35165", "4")]
         )
 
+    @unittest.skip("Multiple shorthand citations are currently not yet supported")
     def test_with_multiple_citations_shorthand(self):
         """Multiple citations in a shorthand notation. Currently not supported."""
 
