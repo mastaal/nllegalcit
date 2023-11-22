@@ -12,6 +12,7 @@ import re
 
 from enum import Enum
 from importlib.resources import files
+from typing import Optional
 
 from lark import Lark, Visitor, ParseTree
 
@@ -34,7 +35,8 @@ class KamerstukCitation:
     vergaderjaar: str
     dossiernummer: str
     ondernummer: str
-    paginaverwijzing: str
+    paginaverwijzing: Optional[str]
+    rijksdossiernummer: Optional[str]
 
     def __init__(
             self,
@@ -42,16 +44,26 @@ class KamerstukCitation:
             vergaderjaar: str,
             dossiernummer: str,
             ondernummer: str,
-            paginaverwijzing=None):
+            paginaverwijzing=None,
+            rijksdossiernummer=None):
         self.kamer = kamer
         self.vergaderjaar = vergaderjaar
         self.dossiernummer = dossiernummer
         self.ondernummer = ondernummer
         self.paginaverwijzing = paginaverwijzing
+        self.rijksdossiernummer = rijksdossiernummer
 
     def __str__(self) -> str:
+        # There surely must be a better way to do this
+        if self.rijksdossiernummer is not None and self.paginaverwijzing is not None:
+            return (f"KamerstukCitation {self.kamer} {self.vergaderjaar} {self.dossiernummer}"
+                    f" ({self.rijksdossiernummer}) {self.ondernummer} {self.paginaverwijzing}")
         if self.paginaverwijzing is not None:
-            return f"KamerstukCitation {self.kamer} {self.vergaderjaar} {self.dossiernummer} {self.ondernummer} {self.paginaverwijzing}"
+            return (f"KamerstukCitation {self.kamer} {self.vergaderjaar} {self.dossiernummer}"
+                    f"{self.ondernummer} {self.paginaverwijzing}")
+        if self.rijksdossiernummer is not None:
+            return (f"KamerstukCitation {self.kamer} {self.vergaderjaar} {self.dossiernummer}"
+                    f" ({self.rijksdossiernummer}) {self.ondernummer}")
 
         return f"KamerstukCitation {self.kamer} {self.vergaderjaar} {self.dossiernummer} {self.ondernummer}"
 

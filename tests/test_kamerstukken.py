@@ -1,6 +1,10 @@
 """
     tests/test_kamerstukken.py
 
+    Test cases for citations to Kamerstukken.
+
+    Nearly all of these citations are actual citations found in the Kamerstukken.
+
     Copyright 2023, Martijn Staal <nllegalcit [at] martijn-staal.nl>
 
     Available under the EUPL-1.2, or, at your option, any later version.
@@ -107,6 +111,38 @@ class KamerstukCitationTests(unittest.TestCase):
         self.assertEqual(
             parse_kamerstukcitation("               4Bijlage bij Kamerstukken II 2013/14, 31 142, nr. 37; bijlage bij Kamerstukken II 2015/16, 31 142, nr. 55 en bijlage bij Kamerstukken II 2018/19, 35 165, nr. 4"),
             [KamerstukCitation("II", "2013/14", "31142", "37"), KamerstukCitation("II", "2015/16", "31142", "55"), KamerstukCitation("II", "2018/19", "35165", "4")]
+        )
+
+    def test_citation_to_eu_council_dossier(self):
+        """KamerstukCitation test for EU Council dossiers, which have a particular dossiernumber of the form 21 501-07"""
+        # Note that the first citation does not provide a document number, and is thus ignored.
+        self.assertEqual(
+            parse_kamerstukcitation("               1Kamerstukken II 2020/21, 35570 en Kamerstukken II 2020/21, 21 501-07, nr. 1750"),
+            [KamerstukCitation("II", "2020/21", "21501-07", "1750")]
+        )
+
+        self.assertEqual(
+            parse_kamerstukcitation("               38Voorjaarsrapportage 2021, Kamerstukken II 2020/21, 21 501-07, nr. 1750"),
+            [KamerstukCitation("II", "2020/21", "21501-07", "1750")]
+        )
+
+        self.assertEqual(
+            parse_kamerstukcitation("               90Kamerstukken II 2017/18, 21 501-07, nr. 1595"),
+            [KamerstukCitation("II", "2017/18", "21501-07", "1595")]
+        )
+
+        self.assertEqual(
+            parse_kamerstukcitation("               50Kamerstukken II 2015/16,  21 501-30, nr. 374"),
+            [KamerstukCitation("II", "2015/16", "21501-30", "374")]
+        )
+
+    @unittest.skip("Rijksdossiernummers are currently not yet supported")
+    def test_rijkswet_citation(self):
+        """Test KamerstukCitation to a Rijkswet dossier, which has two dossier numbers, noted as e.g. 27 484 (R 1669)"""
+
+        self.assertEqual(
+            parse_kamerstukcitation("Ministerie van Binnenlandse Zaken en Koninkrijksrelaties (Kamerstukken I 2003/04, 27 484 (R 1669), nr. 289"),
+            [KamerstukCitation("I", "2003/04", "27484", "289", rijksdossiernummer="R1669")]
         )
 
     @unittest.skip("Multiple shorthand citations are currently not yet supported")
