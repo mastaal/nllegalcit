@@ -5,6 +5,8 @@ pylint
 flake8
 mypy
 
+pytest
+
 # Analyze license compliance of dependencies
 pip-licenses>=4.3.3
 
