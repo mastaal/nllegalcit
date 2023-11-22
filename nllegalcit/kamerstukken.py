@@ -8,7 +8,6 @@
     SPDX-License-Identifier: EUPL-1.2
 """
 
-import logging
 import re
 
 from enum import Enum
@@ -18,7 +17,6 @@ from lark import Lark, Visitor, ParseTree
 
 from nllegalcit.errors import CitationParseException
 
-logger = logging.getLogger(__name__)
 re_whitespace: re.Pattern = re.compile(r"\s+")
 
 kamerstukken_grammar = files("nllegalcit.grammars").joinpath("kamerstukken.lark").read_text()
@@ -38,7 +36,13 @@ class KamerstukCitation:
     ondernummer: str
     paginaverwijzing: str
 
-    def __init__(self, kamer: str, vergaderjaar: str, dossiernummer: str, ondernummer: str, paginaverwijzing=None):
+    def __init__(
+            self,
+            kamer: str,
+            vergaderjaar: str,
+            dossiernummer: str,
+            ondernummer: str,
+            paginaverwijzing=None):
         self.kamer = kamer
         self.vergaderjaar = vergaderjaar
         self.dossiernummer = dossiernummer
@@ -53,9 +57,9 @@ class KamerstukCitation:
 
     def __repr__(self) -> str:
         if self.paginaverwijzing is not None:
-            return f"{self.kamer} {self.vergaderjaar} {self.dossiernummer} {self.ondernummer} {self.paginaverwijzing}"
+            return f"Kamerstukken {self.kamer} {self.vergaderjaar} {self.dossiernummer} {self.ondernummer} {self.paginaverwijzing}"
 
-        return f"{self.kamer} {self.vergaderjaar} {self.dossiernummer} {self.ondernummer}"
+        return f"Kamerstukken {self.kamer} {self.vergaderjaar} {self.dossiernummer} {self.ondernummer}"
 
     def __eq__(self, other) -> bool:
         try:
@@ -118,8 +122,6 @@ def parse_kamerstukcitation(raw_citation: str) -> list[KamerstukCitation]:
     "Parse a raw kamerstuk citation"
 
     parsetree = parser.parse(raw_citation)
-    logger.debug(parsetree.children)
-    # print(parsetree)
     v = CitationVisitor()
     v.visit(parsetree)
 
