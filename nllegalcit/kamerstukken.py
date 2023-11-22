@@ -69,6 +69,7 @@ class KamerstukCitation:
 
 
 class CitationVisitor(Visitor):
+    """Generic visitor to create Citation objects for a ParseTree"""
 
     def __init__(self):
         super().__init__()
@@ -76,6 +77,7 @@ class CitationVisitor(Visitor):
         self.citations: list[KamerstukCitation] = []
 
     def kamerstuk(self, tree: ParseTree):
+        """Create a KamerstukCitation from a kamerstuk ParseTree rule"""
         v = KamerstukCitationVisitor()
         v.visit(tree)
         self.citations.append(v.citation)
@@ -83,6 +85,8 @@ class CitationVisitor(Visitor):
 
 class KamerstukCitationVisitor(Visitor):
     """Visitor class to create a KamerstukCitation from the Lark parse tree"""
+
+    # pylint: disable=missing-function-docstring
 
     def __init__(self):
         super().__init__()

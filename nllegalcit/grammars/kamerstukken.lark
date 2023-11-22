@@ -6,11 +6,18 @@
 // KOOP, which can be found here: https://gitlab.com/koop/ld/lx/linkextractor/-/blob/main/src/webapp/links/grammars/oep-parl-docs.waxeye?
 ?start: inlinecit+
 
-inlinecit: other? kamerstuk other? | other
-other: WS | numberword | numberword WS | PUNCTUATION? numberword PUNCTUATION | numberword WS PUNCTUATION | PUNCTUATION WS | WS NUMBER | NUMBER | PUNCTUATION
-PUNCTUATION: /[\/\-.,:;-?!\(\)«»]+/
+inlinecit: kamerstuk | text
+text: punctuation | NUMBER | WORD | WS
+punctuation: APOSTROPHE | QUOTATIONMARK | HYPHEN | PUNCTUATIONMARKS
+APOSTROPHE: /[‘`'′´’]/
+QUOTATIONMARK: /[‘’“”"«»]/
+HYPHEN: /[-‐‑‒–—―−]/
+PUNCTUATIONMARKS: /[\/\-.,:;_+*?!()]/
 numberword: NUMBER | WORD
-NUMBER: /\d+/
+NUMBER: /\d+([.,]?\d+)*/
+
+UNICODE_LETTER: /\w/
+WORD: UNICODE_LETTER+
 
 // TODO: Support for odd kamernrs and R nummers
 kamerstuk: KSLABEL KSSEP kamer KSSEP vergaderjaar KSSEP dossiernummer KSSEP ONDERNUMMERNR KSSEP ondernummer KSSEP? paginaverwijzing?
@@ -50,8 +57,5 @@ PAGINA_RANGE: "e.v."
             | "/"
             | "–"
             | "en"
-
-UNICODE_LETTER: /\w/
-WORD: UNICODE_LETTER+
 
 %import unicode.WS
