@@ -20,7 +20,7 @@ from nllegalcit.errors import CitationParseException
 
 re_whitespace: re.Pattern = re.compile(r"\s+")
 
-kamerstukken_grammar = files("nllegalcit.grammars").joinpath("kamerstukken.lark").read_text()
+kamerstukken_grammar = files("nllegalcit.grammars").joinpath("citations.lark").read_text()
 
 
 class KamerstukCitation:
@@ -105,31 +105,32 @@ class KamerstukCitationVisitor(Visitor):
 
         self.citation = KamerstukCitation("?", "?", "?", "?")
 
-    def kamer(self, tree: ParseTree):
-        if tree.children[0].type == "TK":
+    def kamerstukken__kamer(self, tree: ParseTree):
+        if tree.children[0].type == "kamerstukken__TK":
             self.citation.kamer = "II"
-        elif tree.children[0].type == "EK":
+        elif tree.children[0].type == "kamerstukken__EK":
             self.citation.kamer = "I"
-        elif tree.children[0].type == "VV":
+        elif tree.children[0].type == "kamerstukken__VV":
             self.citation.kamer = "VV"
         else:
             raise CitationParseException("Invalid Kamer in KamerstukCitation")
 
-    def dossiernummer(self, tree: ParseTree):
+    def kamerstukken__dossiernummer(self, tree: ParseTree):
         self.citation.dossiernummer = re_whitespace.sub("", tree.children[0])
 
-    def vergaderjaar(self, tree: ParseTree):
+    def kamerstukken__vergaderjaar(self, tree: ParseTree):
         self.citation.vergaderjaar = ''.join(tree.children)
 
-    def ondernummer(self, tree: ParseTree):
+    def kamerstukken__ondernummer(self, tree: ParseTree):
         self.citation.ondernummer = tree.children[0]
 
-    def paginaverwijzing(self, tree: ParseTree):
+    def kamerstukken__paginaverwijzing(self, tree: ParseTree):
         self.citation.paginaverwijzing = ''.join(tree.children)
 
 
-parser = Lark(
-    grammar=kamerstukken_grammar,
+parser = Lark.open(
+    "grammars/citations.lark",
+    rel_to=__file__,
     parser="earley"
 )
 
@@ -138,6 +139,7 @@ def parse_kamerstukcitation(raw_citation: str) -> list[KamerstukCitation]:
     "Parse a raw kamerstuk citation"
 
     parsetree = parser.parse(raw_citation)
+    print(parsetree)
     v = CitationVisitor()
     v.visit(parsetree)
 

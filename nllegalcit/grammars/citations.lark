@@ -1,0 +1,22 @@
+// Copyright 2023, Martijn Staal <nllegalcit [at] martijn-staal.nl>
+// SPDX-License-Identifier: EUPL-1.2
+// Available under the EUPL-1.2, or, at your option, any later version.
+// General parser grammer to find all citations in a text
+?start: inlinecit+
+
+inlinecit: kamerstuk | text
+text: punctuation | NUMBER | WORD | WS
+punctuation: APOSTROPHE | QUOTATIONMARK | HYPHEN | PUNCTUATIONMARKS
+APOSTROPHE: /[‘`'′´’]/
+QUOTATIONMARK: /[‘’“”"«»]/
+HYPHEN: /[-‐‑‒–—―−]/
+PUNCTUATIONMARKS: /[\/\-.,:;_+*?!()]/
+numberword: NUMBER | WORD
+NUMBER: /\d+([.,]?\d+)*/
+
+UNICODE_LETTER: /\w/
+WORD: UNICODE_LETTER+
+
+%import .kamerstukken.kamerstuk -> kamerstuk
+
+%import unicode.WS
