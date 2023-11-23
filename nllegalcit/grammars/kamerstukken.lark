@@ -34,8 +34,11 @@ JAAR4: ("18" | "19" | "20") /[0-9]{2}/
 JAARSEP: /[\/-]/
 JAAR2: /'?[0-9]{2}/
 
-dossiernummer: DOSSIERNUMMER_BASIS
-DOSSIERNUMMER_BASIS: /[0-9]{2}\s?[0-9]{3}[\s-]?[A-Z]*/ | /21\s?501-\d+/
+dossiernummer: DOSSIERNUMMER DOSSIERNUMMER_TOEVOEGING | DOSSIERNUMMER
+DOSSIERNUMMER: /[0-9]{2}[.\s]?[0-9]{3}/
+DOSSIERNUMMER_TOEVOEGING: /[\s\-][A-Z]+/
+                        | /[-]\d{2}/
+
 ONDERNUMMARAANDUIDING: "nr."
                      | "nrs."
                      | "nummer"

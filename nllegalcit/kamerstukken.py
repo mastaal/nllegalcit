@@ -19,6 +19,7 @@ from lark import Lark, Visitor, ParseTree
 from nllegalcit.errors import CitationParseException
 
 re_whitespace: re.Pattern = re.compile(r"\s+")
+re_whitespace_and_dash: re.Pattern = re.compile(r"[\s-]+")
 
 kamerstukken_grammar = files("nllegalcit.grammars").joinpath("citations.lark").read_text()
 
@@ -116,7 +117,18 @@ class KamerstukCitationVisitor(Visitor):
             raise CitationParseException("Invalid Kamer in KamerstukCitation")
 
     def kamerstukken__dossiernummer(self, tree: ParseTree):
-        self.citation.dossiernummer = re_whitespace.sub("", tree.children[0])
+        dossiernummer = "?"
+        dossiernummer_toevoeging: Optional[str] = None
+        for c in tree.children:
+            if c.type == "kamerstukken__DOSSIERNUMMER":
+                dossiernummer = re_whitespace.sub("", c)
+            elif c.type == "kamerstukken__DOSSIERNUMMER_TOEVOEGING":
+                dossiernummer_toevoeging = re_whitespace_and_dash.sub("", c)
+
+        if dossiernummer_toevoeging is None:
+            self.citation.dossiernummer = dossiernummer
+        else:
+            self.citation.dossiernummer = f"{dossiernummer}-{dossiernummer_toevoeging}"
 
     def kamerstukken__vergaderjaar(self, tree: ParseTree):
         self.citation.vergaderjaar = ''.join(tree.children)

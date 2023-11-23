@@ -100,7 +100,7 @@ class KamerstukCitationTests(unittest.TestCase):
         )
         self.assertEqual(
             parse_kamerstukcitation("               1Kamerstukken II 2021/2022, 35 925 IV, nr. 26"),
-            [KamerstukCitation("II", "2021/2022", "35925IV", "26")]
+            [KamerstukCitation("II", "2021/2022", "35925-IV", "26")]
         )
         self.assertEqual(
             parse_kamerstukcitation("               44Ontwerp-Miljoenennota 2020, Kamerstukken II 2019/20, 35 300, nr. 3"),
