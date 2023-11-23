@@ -6,7 +6,7 @@
 // KOOP, which can be found here: https://gitlab.com/koop/ld/lx/linkextractor/-/blob/main/src/webapp/links/grammars/oep-parl-docs.waxeye?
 
 // TODO: Support for odd kamernrs and R nummers
-kamerstuk: KSLABEL KSSEP kamer KSSEP vergaderjaar_met_pre (KSSEP | "-") dossiernummer KSSEP (ONDERNUMMARAANDUIDING KSSEP)? ondernummer (KSSEP paginaverwijzing)?
+kamerstuk: KSLABEL KSSEP kamer KSSEP vergaderjaar_met_pre (KSSEP | "-") dossiernummer KSSEP (ONDERNUMMARAANDUIDING KSSEP?)? ondernummer (KSSEP paginaverwijzing)?
 
 KSLABEL: /kamerstuk(ken)?/i
 
@@ -40,6 +40,7 @@ JAAR2: /'?[0-9]{2}/
 dossiernummer: DOSSIERNUMMER DOSSIERNUMMER_TOEVOEGING | DOSSIERNUMMER
 DOSSIERNUMMER: /[0-9]{2}[.\s]?[0-9]{2,3}/
 DOSSIERNUMMER_TOEVOEGING: /[\s\-][A-Z]+/
+                        | WS "hoofdstuk"i WS /[A-Z]+/
                         | /[-]\d{2}/
 
 ONDERNUMMARAANDUIDING: "nr."i

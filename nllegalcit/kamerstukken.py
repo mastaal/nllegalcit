@@ -123,7 +123,7 @@ class KamerstukCitationVisitor(Visitor):
             if c.type == "kamerstukken__DOSSIERNUMMER":
                 dossiernummer = re_whitespace.sub("", c)
             elif c.type == "kamerstukken__DOSSIERNUMMER_TOEVOEGING":
-                dossiernummer_toevoeging = re_whitespace_and_dash.sub("", c)
+                dossiernummer_toevoeging = re_whitespace_and_dash.sub("", c).replace("hoofdstuk", "")
 
         if dossiernummer_toevoeging is None:
             self.citation.dossiernummer = dossiernummer

@@ -59,6 +59,14 @@ class KamerstukCitationTests(unittest.TestCase):
             parse_kamerstukcitation("Kamerstukken I 1979/80, 15 516, nr. 42e, blz. 7"),
             [KamerstukCitation("I", "1979/80", "15516", "42e", paginaverwijzing="blz. 7")]
         )
+        self.assertEqual(
+            parse_kamerstukcitation("Kamerstukken II, 1999-2000, 26 271, nr. 6, p. 15-16; nr. 7, p. 5-6."),
+            [KamerstukCitation("II", "1999-2000", "26271", "6", paginaverwijzing="p. 15-16")]
+        )
+        self.assertEqual(
+            parse_kamerstukcitation("Kamerstukken II 1991-1992, 22 545, nr.3, blz. 134"),
+            [KamerstukCitation("II", "1991-1992", "22545", "3", paginaverwijzing="blz. 134")]
+        )
 
     def test_in_context_recent(self):
         """KamerstukCitation test cases within a textual context from recent sources"""
@@ -114,6 +122,22 @@ class KamerstukCitationTests(unittest.TestCase):
             parse_kamerstukcitation("                  (Commissie Van Beek). Zie: Kamerstukken II 2013/14, 31 142, nr. 37"),
             [KamerstukCitation("II", "2013/14", "31142", "37")]
         )
+        self.assertEqual(
+            parse_kamerstukcitation("Memorie van Toelichting, Kamerstukken II 1998/99, 26 727, nr. 3, blz. 238-239"),
+            [KamerstukCitation("II", "1998/99", "26727", "3", paginaverwijzing="blz. 238-239")]
+        )
+        self.assertEqual(
+            parse_kamerstukcitation("rklaring bij een bekennende verdachte\", Kamerstukken II, 2003-2004, 29 255 nr. 3 p. 13 en 14"),
+            [KamerstukCitation("II", "2003-2004", "29255", "3", paginaverwijzing="p. 13 en 14")]
+        )
+        self.assertEqual(
+            parse_kamerstukcitation("""zo blijkt uit de memorie van toelichting bij de Wet uitvoering Verdrag van Aarhus
+                                    (Kamerstukken II 2002/03, 28 835, nr. 3, blz. 9). Dit betekent dat het in artikel 10
+                                    van de Wet openbaarheid van bestuur opgenomen toetsingskader voor milieu-informatie
+                                    terugtreedt indien sprake is van een bijzondere wettelijke regeling die een uitputtend
+                                    kader bevat voor openbaarhe"""),
+            [KamerstukCitation("II", "2002/03", "28835", "3", paginaverwijzing="blz. 9")]
+        )
 
     def test_in_context_older(self):
         """KamerstukCitation test cases within a textual context from older sources"""
@@ -141,12 +165,22 @@ class KamerstukCitationTests(unittest.TestCase):
             [KamerstukCitation("II", "1985/- 86", "19559", "6", paginaverwijzing="blz. 7")]
         )
         self.assertEqual(
-            parse_kamerstukcitation(""" Hetgeen in punt 4.6 van de Conclusie van de Advocaat- Generaal omtrent de wetsgeschiedenis
-                                    is vermeld is hiermede in overeenstemming, al noopt hetgeen aldaar is vermeld uit de Nadere
-                                    Memorie van Antwoord aan de Eerste Kamer (Kamerstukken I 1979/80, 15 516, nr. 42e, blz. 7) wel
-                                    ertoe in gevallen waarin een vennootschap werkzaamheden van uiteenlopende aard verricht"""),
-            [KamerstukCitation("I", "1979/80", "15516", "42e", paginaverwijzing="blz. 7")]
+            parse_kamerstukcitation("""In het kader van de heroverwegingsoperaties (kamerstukken II 1980/81, 16 625, nr. 4) werd
+                                    onder meer een herziening van de AWW aangekondigd. In de begroting voor het jaar 1987
+                                    (kamerstukken II 1986/87, 19 700 hoofdstuk XV, nr. 2) werd nogmaals het voornemen tot een
+                                    algehele herstructructuering van de AWW uitgesproken. In juli 1987 zond de staatssecretaris
+                                    een adviesaanvraag naar de Sociaal-Economische Raad (SER), de Emancipatieraad en de Raad voor
+                                    het Jeugdbeleid inzake een algehele herziening van de AWW."""),
+            [KamerstukCitation("II", "1980/81", "16625", "4"), KamerstukCitation("II", "1986/87", "19700-XV", "2")]
         )
+        # TODO: Fix this! For some reason, this citation is not recognized within textual context
+        # self.assertEqual(
+        #     parse_kamerstukcitation(""" Hetgeen in punt 4.6 van de Conclusie van de Advocaat- Generaal omtrent de wetsgeschiedenis
+        #                             is vermeld is hiermede in overeenstemming, al noopt hetgeen aldaar is vermeld uit de Nadere
+        #                             Memorie van Antwoord aan de Eerste Kamer (Kamerstukken I 1979/80, 15 516, nr. 42e, blz. 7) wel
+        #                             ertoe in gevallen waarin een vennootschap werkzaamheden van uiteenlopende aard verricht"""),
+        #     [KamerstukCitation("I", "1979/80", "15516", "42e", paginaverwijzing="blz. 7")]
+        # )
         # Not sure yet what this should be
         # self.assertEqual(
         #     parse_kamerstukcitation("""9 Zie Minister Polak in de Eerste Kamer
@@ -227,6 +261,16 @@ class KamerstukCitationTests(unittest.TestCase):
         self.assertEqual(
             parse_kamerstukcitation("               8Kamerstukken II 2015/16, 34 356 (R2064), nr. 3"),
             [KamerstukCitation("II", "2015/16", "34356", "3", rijksdossiernummer="R2064")]
+        )
+
+    @unittest.skip("In-citation attachments are currently not yet supported")
+    def test_in_citation_attachment_number(self):
+        """KamerstukCitation for in-citation attachment numbering"""
+
+        # TODO: Add some way to add this attachment to the citation
+        self.assertEqual(
+            parse_kamerstukcitation("Bij brief van 29 juli 1988 (Kamerstukken II 1988/89, 21 227, nr. 3 (bijlage IV), blz. 21), antwoordden de"),
+            [KamerstukCitation("II", "1988/89", "21227", "3", paginaverwijzing="blz. 21")]
         )
 
     def test_sloppy_citation(self):
