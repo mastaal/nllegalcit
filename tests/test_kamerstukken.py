@@ -55,9 +55,13 @@ class KamerstukCitationTests(unittest.TestCase):
             parse_kamerstukcitation("Kamerstukken II 2005/06, 30 316, nr. 3, p. 5"),
             [KamerstukCitation("II", "2005/06", "30316", "3", paginaverwijzing="p. 5")]
         )
+        self.assertEqual(
+            parse_kamerstukcitation("Kamerstukken I 1979/80, 15 516, nr. 42e, blz. 7"),
+            [KamerstukCitation("I", "1979/80", "15516", "42e", paginaverwijzing="blz. 7")]
+        )
 
-    def test_with_some_other_text_around_the_citation(self):
-        """KamerstukCitation test cases with some other input in the string"""
+    def test_in_context_recent(self):
+        """KamerstukCitation test cases within a textual context from recent sources"""
 
         self.assertEqual(
             parse_kamerstukcitation("               1Kamerstukken II 2001/02, 28 295, nr. 1"),
@@ -110,6 +114,48 @@ class KamerstukCitationTests(unittest.TestCase):
             parse_kamerstukcitation("                  (Commissie Van Beek). Zie: Kamerstukken II 2013/14, 31 142, nr. 37"),
             [KamerstukCitation("II", "2013/14", "31142", "37")]
         )
+
+    def test_in_context_older(self):
+        """KamerstukCitation test cases within a textual context from older sources"""
+        self.assertEqual(
+            parse_kamerstukcitation("5.3.2. Voorts houdt de Memorie van Antwoord (Kamerstukken II, 1987/1988, 20 074, nr. 6, blz. 19–20) onder meer in: "),
+            [KamerstukCitation("II", "1987/1988", "20074", "6", paginaverwijzing="blz. 19–20")]
+        )
+        self.assertEqual(
+            parse_kamerstukcitation(""" gegeven toelichting ertoe strekte het begrip aftrekbare kosten aan te scherpen
+                                    (Kamerstukken II, 1988/89, 20 873, nr. 39). 3.5. In het verdere verloop van de parlementaire
+                                    behandeling zijn met betrekking tot dit amendement in het bijzonder de arresten van de Hoge
+                                    Raad van 30 november 1977, nr. 18 586, BNB 1978/7, en van 7 mei 1980, nr. 19 874, BNB 1980/186,
+                                    ter sprake gebracht (Handelingen II, 1988/89, blz. 39-2410 en 2435 en
+                                    Handelingen UCV, 1988/89, nr. 26, blz. 50 en 53)."""),
+            [KamerstukCitation("II", "1988/89", "20873", "39")]
+        )
+        self.assertEqual(
+            parse_kamerstukcitation("6.2. Ter toelichting werd opgemerkt (Kamerstukken II, Zitting 1958-1959-5380, Nr. 3, blz. 41, slot lk.):"),
+            [KamerstukCitation("II", "1958-1959", "5380", "3", paginaverwijzing="blz. 41")]
+        )
+        self.assertEqual(
+            parse_kamerstukcitation(""" Door de Regering is hierop in de Tweede Kamer als volgt gereageerd (Memorie van Antwoord,
+                                    Kamerstukken II, 1985/- 86, 19 559, nr. 6, blz. 7): "De door ons in artikel III voorgestelde
+                                    regeling is, zoals"""),
+            [KamerstukCitation("II", "1985/- 86", "19559", "6", paginaverwijzing="blz. 7")]
+        )
+        self.assertEqual(
+            parse_kamerstukcitation(""" Hetgeen in punt 4.6 van de Conclusie van de Advocaat- Generaal omtrent de wetsgeschiedenis
+                                    is vermeld is hiermede in overeenstemming, al noopt hetgeen aldaar is vermeld uit de Nadere
+                                    Memorie van Antwoord aan de Eerste Kamer (Kamerstukken I 1979/80, 15 516, nr. 42e, blz. 7) wel
+                                    ertoe in gevallen waarin een vennootschap werkzaamheden van uiteenlopende aard verricht"""),
+            [KamerstukCitation("I", "1979/80", "15516", "42e", paginaverwijzing="blz. 7")]
+        )
+        # Not sure yet what this should be
+        # self.assertEqual(
+        #     parse_kamerstukcitation("""9 Zie Minister Polak in de Eerste Kamer
+        #                             (Kamerstukken I, 1969-1970, 9595,9596, blz 1092): De mogelijkheid
+        #                             van het aanvragen van een enquête zal naar ik hoop en verwacht vooral
+        #                             preventief werken en misstanden voorkomen, misstanden, die gelukkig in het
+        #                             Nederlandse bedrijfsleven slechts sporadisch voorkomen."""),
+        #     [KamerstukCitation("I", "1969-1970", "9595,9596")]
+        # )
 
     def test_with_other_text_with_special_characters(self):
         """KamerstukCitation test cases with some other input with special chracters in the string"""
@@ -206,4 +252,15 @@ class KamerstukCitationTests(unittest.TestCase):
         self.assertEqual(
             parse_kamerstukcitation("               15Kamerstukken II 2019/20, 29 754, nrs. 520 en 548 en Aanhangsel Handelingen II 2019/20, nr. 89"),
             [KamerstukCitation("II", "2019/20", "29754", "520"), KamerstukCitation("II", "2019/20", "29754", "548")]
+        )
+
+        self.assertEqual(
+            parse_kamerstukcitation("""Een vordering tot tenuitvoerlegging slechts op grond van niet-naleving van een bijzondere
+                                    voorwaarde kan ingevolge art. 14g, derde lid, Sr, evenals onder de voorheen geldende regeling,
+                                    uitsluitend worden ingediend bij de rechter die de voorwaarde heeft opgelegd
+                                     (Kamerstukken II, 1984–1985, 18764, nrs. 1–3, blz. 29). De wet voorziet niet in de mogelijkheid
+                                     dat de behandeling van een zodanige vordering wordt gevoegd met de behandeling van een nieuwe
+                                     strafzaak. Op een zodanige vordering dient derhalve een afzonderlijke beslissing te worden
+                                     gegeven."""),
+            [KamerstukCitation("II", "1984/1985", "18764", "1-3", paginaverwijzing="blz. 29")]
         )
