@@ -1,9 +1,9 @@
 # nllegalcit
 
-![GitHub License](https://img.shields.io/github/license/mastaal/nllegalcit?color=%23003399)
-![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/mastaal/nllegalcit/pytest.yml?label=tests)
-![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/mastaal/nllegalcit/pylint.yml?label=linter)
-![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/mastaal/nllegalcit/mypy.yml?label=type%20checking)
+[![GitHub License](https://img.shields.io/github/license/mastaal/nllegalcit?color=%23003399)](https://github.com/mastaal/nllegalcit/blob/main/LICENSE)
+[![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/mastaal/nllegalcit/pytest.yml?label=tests)](https://github.com/mastaal/nllegalcit/actions/workflows/pytest.yml)
+[![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/mastaal/nllegalcit/pylint.yml?label=linter)](https://github.com/mastaal/nllegalcit/actions/workflows/pylint.yml)
+[![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/mastaal/nllegalcit/mypy.yml?label=type%20checking)](https://github.com/mastaal/nllegalcit/actions/workflows/mypy.yml)
 
 
 Python library to find citations to Dutch legal documents in natural language text.
