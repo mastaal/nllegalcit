@@ -56,8 +56,24 @@ class KamerstukCitationTests(unittest.TestCase):
             [KamerstukCitation("II", "2005/06", "30316", "3", paginaverwijzing="p. 5")]
         )
 
-    def test_with_some_other_text(self):
+    def test_with_some_other_text_around_the_citation(self):
         """KamerstukCitation test cases with some other input in the string"""
+
+        self.assertEqual(
+            parse_kamerstukcitation("               1Kamerstukken II 2001/02, 28 295, nr. 1"),
+            [KamerstukCitation("II", "2001/02", "28295", "1")]
+        )
+
+        self.assertEqual(
+            parse_kamerstukcitation("               32Advies van de Afdeling advisering van 9 december 2016, Kamerstukken II 2016/17, 34 673, nr. 4"),
+            [KamerstukCitation("II", "2016/17", "34673", "4")]
+        )
+
+        self.assertEqual(
+            parse_kamerstukcitation("               10Zie voor meer toelichting over deze instrumenten Kamerstukken II 2014/15, 34 208, nr. 3"),
+            [KamerstukCitation("II", "2014/15", "34208", "3")]
+        )
+
         self.assertEqual(
             parse_kamerstukcitation("Zoals te vinden in Kamerstukken II 2005/06, 30 316, nr. 3, p. 5, is algemeen"),
             [KamerstukCitation("II", "2005/06", "30316", "3", paginaverwijzing="p. 5")]
@@ -136,6 +152,23 @@ class KamerstukCitationTests(unittest.TestCase):
             [KamerstukCitation("II", "2015/16", "21501-30", "374")]
         )
 
+    def test_citation_to_budget_law_dossier(self):
+        """KamerstukCitation test for budgetarry laws dossiers, which have a particular dossiernumber of the form 35300-XV"""
+
+        self.assertEqual(
+            parse_kamerstukcitation("                  (Kamerstukken II 2019/20, 35 300-XV, nr. 28"),
+            [KamerstukCitation("II", "2019/20", "35300-XV", "28")]
+        )
+
+        self.assertEqual(
+            parse_kamerstukcitation("               2Kamerstukken II 2019/20, 35 300 XVI, nr. 133"),
+            [KamerstukCitation("II", "2019/20", "35300-XVI", "133")]
+        )
+        self.assertEqual(
+            parse_kamerstukcitation("               100Motie van het lid Sneller c.s., Kamerstukken II 2020/21 35 570-IX, nr. 14"),
+            [KamerstukCitation("II", "2020/21", "35570-IX", "14")]
+        )
+
     @unittest.skip("Rijksdossiernummers are currently not yet supported")
     def test_rijkswet_citation(self):
         """Test KamerstukCitation to a Rijkswet dossier, which has two dossier numbers, noted as e.g. 27 484 (R 1669)"""
@@ -145,9 +178,22 @@ class KamerstukCitationTests(unittest.TestCase):
             [KamerstukCitation("I", "2003/04", "27484", "289", rijksdossiernummer="R1669")]
         )
 
+        self.assertEqual(
+            parse_kamerstukcitation("               8Kamerstukken II 2015/16, 34 356 (R2064), nr. 3"),
+            [KamerstukCitation("II", "2015/16", "34356", "3", rijksdossiernummer="R2064")]
+        )
+
+    def test_sloppy_citation(self):
+        """KamerstukCitation test cases for citations that are not completely correct, but still contain all necessary information"""
+
+        self.assertEqual(
+            parse_kamerstukcitation("                  Studiegroep Begrotingsruimte)» bij Kamerstukken I 2020/21, 35 570, C; Kamerstukken II 2020/21, 35 570, nr. 3"),
+            [KamerstukCitation("I", "2020/21", "35570", "C"), KamerstukCitation("II", "2020/21", "35570", "3")]
+        )
+
     @unittest.skip("Multiple shorthand citations are currently not yet supported")
     def test_with_multiple_citations_shorthand(self):
-        """Multiple citations in a shorthand notation. Currently not supported."""
+        """KamerstukCitation: Multiple citations in a shorthand notation. Currently not supported."""
 
         self.assertEqual(
             parse_kamerstukcitation("               1Kamerstukken II 2020/21, 35 625, nr. 4, p. 12 en 13, en nr. 6"),
@@ -155,4 +201,9 @@ class KamerstukCitationTests(unittest.TestCase):
                 KamerstukCitation("II", "2020/21", "35625", "4", paginaverwijzing="p. 12 en 13"),
                 KamerstukCitation("II", "2020/21", "35625", "6")
             ]
+        )
+
+        self.assertEqual(
+            parse_kamerstukcitation("               15Kamerstukken II 2019/20, 29 754, nrs. 520 en 548 en Aanhangsel Handelingen II 2019/20, nr. 89"),
+            [KamerstukCitation("II", "2019/20", "29754", "520"), KamerstukCitation("II", "2019/20", "29754", "548")]
         )
