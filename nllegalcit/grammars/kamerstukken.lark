@@ -6,16 +6,27 @@
 // KOOP, which can be found here: https://gitlab.com/koop/ld/lx/linkextractor/-/blob/main/src/webapp/links/grammars/oep-parl-docs.waxeye?
 
 // TODO: Support for odd kamernrs and R nummers
-kamerstuk: KSLABEL KSSEP kamer KSSEP vergaderjaar KSSEP dossiernummer KSSEP ONDERNUMMERNR KSSEP ondernummer KSSEP? paginaverwijzing?
+kamerstuk: KSLABEL KSSEP kamer KSSEP vergaderjaar KSSEP dossiernummer KSSEP ONDERNUMMARAANDUIDING KSSEP ondernummer KSSEP? paginaverwijzing?
 
 KSLABEL: /\(?kamerstuk(ken)?/i
 
 KSSEP: /[,\s]+/
 
 kamer:  TK | EK | VV
-TK: "II" | "2"
-EK: "I" | "1"
+TK: "II"
+  | "2"
+  | "Tweede" WS "Kamer"
+  | "TK"
+  | "T.K."
+EK: "I"
+  | "1"
+  | "Eerste" WS "Kamer"
+  | "EK"
+  | "E.K."
 VV: "VV"
+  | "Verenigde" WS "Vergadering"
+  | "I-II"
+  | "I/II"
 
 vergaderjaar: JAAR4 JAARSEP (JAAR4 | JAAR2)
             | JAAR2 JAARSEP JAAR2
@@ -25,7 +36,10 @@ JAAR2: /'?[0-9]{2}/
 
 dossiernummer: DOSSIERNUMMER_BASIS
 DOSSIERNUMMER_BASIS: /[0-9]{2}\s?[0-9]{3}[\s-]?[A-Z]*/ | /21\s?501-\d+/
-ONDERNUMMERNR: /nr./
+ONDERNUMMARAANDUIDING: "nr."
+                     | "nrs."
+                     | "nummer"
+                     | "nummers"
 
 // Workaround because the Visitor didn't seem to pick up on the term-only version
 ondernummer: ONDERNUMMER
@@ -34,7 +48,12 @@ ONDERNUMMER: /[0-9A-Z]+/
 paginaverwijzing: PAGINA_AANDUIDING KSSEP? PAGINANUMMER KSSEP? PAGINA_RANGE KSSEP? PAGINANUMMER
                 | PAGINA_AANDUIDING KSSEP? PAGINANUMMER
 
-PAGINA_AANDUIDING: "p." | "pag." | "pagina" | "b." | "blz." | "bladzijde"
+PAGINA_AANDUIDING: "p."
+                 | "pag."
+                 | "pagina"
+                 | "b."
+                 | "blz."
+                 | "bladzijde"
 PAGINANUMMER: /\d+/
 PAGINA_RANGE: "e.v."
             | "ev."
@@ -43,3 +62,5 @@ PAGINA_RANGE: "e.v."
             | "/"
             | "–"
             | "en"
+
+%import unicode.WS

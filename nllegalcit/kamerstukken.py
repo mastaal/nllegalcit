@@ -139,7 +139,6 @@ def parse_kamerstukcitation(raw_citation: str) -> list[KamerstukCitation]:
     "Parse a raw kamerstuk citation"
 
     parsetree = parser.parse(raw_citation)
-    print(parsetree)
     v = CitationVisitor()
     v.visit(parsetree)
 
