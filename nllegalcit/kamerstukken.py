@@ -131,7 +131,7 @@ class KamerstukCitationVisitor(Visitor):
                 dossiernummer_toevoeging = re_replacement_toevoeging_separator.sub("", c).replace("hoofdstuk", "")
 
         if dossiernummer_toevoeging is None:
-            self.citation.dossiernummer = dossiernummer
+            self.citation.dossiernummer = str(dossiernummer)
         else:
             self.citation.dossiernummer = f"{dossiernummer}-{dossiernummer_toevoeging}"
 
@@ -141,16 +141,16 @@ class KamerstukCitationVisitor(Visitor):
 
         for c in tree.children:
             if first_year is None and c.type == "kamerstukken__JAAR4":
-                first_year = c
+                first_year = str(c)
             elif c.type == "kamerstukken__JAAR4":
-                second_year = c
+                second_year = str(c)
             elif c.type == "kamerstukken__JAAR2":
                 if first_year == "1999":
                     second_year = "2000"
                 elif first_year == "1899":
                     second_year = "1900"
                 else:
-                    second_year = f"{first_year[0:2]}{c}"
+                    second_year = f"{first_year[0:2]}{str(c)}"
 
         self.citation.vergaderjaar = f"{first_year}-{second_year}"
 
@@ -162,7 +162,7 @@ class KamerstukCitationVisitor(Visitor):
         for c in tree.children:
             try:
                 if c.type == "kamerstukken__PAGINA_LOS":
-                    paginas_los.append(c)
+                    paginas_los.append(str(c))
             except AttributeError:
                 pass
         pagina_ranges: list[str] = []
@@ -173,9 +173,9 @@ class KamerstukCitationVisitor(Visitor):
                     end = None
                     for d in c.children:
                         if d.type == "kamerstukken__PAGINA_START":
-                            start = d
+                            start = str(d)
                         elif d.type == "kamerstukken__PAGINA_EIND":
-                            end = d
+                            end = str(d)
                     if end is None:
                         pagina_ranges.append(f"{start}-")
                     else:
