@@ -1,0 +1,32 @@
+"""
+    tests/linkextractor/{{test}}.py
+
+    Test cases for citations to Kamerstukken based on the linkextractor {{test}}.xslt test
+    See:
+        - https://gitlab.com/koop/ld/lx/linkextractor/-/blob/main/src/webapp/links/test/unit/{{test}}.xslt
+        - https://gitlab.com/koop/ld/lx/linkextractor/-/blob/main/src/webapp/links/test/input/{{test}}.txt
+
+    Copyright 2023, Martijn Staal <nllegalcit [at] martijn-staal.nl>
+
+    Available under the EUPL-1.2, or, at your option, any later version.
+
+    SPDX-License-Identifier: EUPL-1.2
+"""
+
+# pylint: disable=line-too-long, missing-function-docstring
+
+import unittest
+
+from nllegalcit.kamerstukken import KamerstukCitation, parse_kamerstukcitation
+
+
+class {{testclassname}}(unittest.TestCase):
+    """Test cases for citations to Kamerstukken based on the linkextractor {{test}}.xslt test"""
+
+{% for test_case in test_cases %}
+    def {{test_case.name}}(self):
+        self.assertEqual(
+            parse_kamerstukcitation("{{test_case.input}}"),
+            []
+        )
+{% endfor %}
