@@ -26,7 +26,7 @@ class Oebp11Test(unittest.TestCase):
     def test_1(self):
         self.assertEqual(
             parse_kamerstukcitation("Kamerstukken II 2008-2009, 31 700-VIII, nr. 32, blz. 3"),
-            [KamerstukCitation("II", "2008-2009", "31700-VIII", "32", paginaverwijzing="blz. 3")]
+            [KamerstukCitation("II", "2008-2009", "31700-VIII", "32", paginaverwijzing="3")]
         )
 
     # Note that the linkextractor apparantly normalizes the year notation

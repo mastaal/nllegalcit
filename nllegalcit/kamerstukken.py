@@ -158,7 +158,35 @@ class KamerstukCitationVisitor(Visitor):
         self.citation.ondernummer = tree.children[0]
 
     def kamerstukken__paginaverwijzing(self, tree: ParseTree):
-        self.citation.paginaverwijzing = ''.join(tree.children)
+        paginas_los: list[str] = []
+        for c in tree.children:
+            try:
+                if c.type == "kamerstukken__PAGINA_LOS":
+                    paginas_los.append(c)
+            except AttributeError:
+                pass
+        pagina_ranges: list[str] = []
+        for c in tree.children:
+            try:
+                if c.data == "kamerstukken__pagina_range":
+                    start = None
+                    end = None
+                    for d in c.children:
+                        if d.type == "kamerstukken__PAGINA_START":
+                            start = d
+                        elif d.type == "kamerstukken__PAGINA_EIND":
+                            end = d
+                    if end is None:
+                        pagina_ranges.append(f"{start}-")
+                    else:
+                        pagina_ranges.append(f"{start}-{end}")
+            except AttributeError:
+                pass
+        paginas = paginas_los + pagina_ranges
+        if len(paginas) == 1:
+            self.citation.paginaverwijzing = paginas[0]
+        else:
+            self.citation.paginaverwijzing = ','.join(paginas)
 
 
 parser = Lark.open(

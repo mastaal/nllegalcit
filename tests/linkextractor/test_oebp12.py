@@ -68,7 +68,7 @@ class Oebp11Test(unittest.TestCase):
     def test_7(self):
         self.assertEqual(
             parse_kamerstukcitation("Kamerstuk I 31 145 nummer AA, p. 15"),
-            [KamerstukCitation("I", "?", "31145", "AA", paginaverwijzing="p. 15")]
+            [KamerstukCitation("I", "?", "31145", "AA", paginaverwijzing="15")]
         )
 
     def test_8(self):
