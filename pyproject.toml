@@ -12,7 +12,13 @@ description = "Python library to find citations to Dutch legal documents in natu
 readme = "README.md"
 requires-python = ">=3.10"
 classifiers = [
-    "License :: OSI Approved :: European Union Public Licence 1.2 (EUPL 1.2)"
+    "Programming Language :: Python :: 3 :: Only",
+    "License :: OSI Approved :: European Union Public Licence 1.2 (EUPL 1.2)",
+    "Intended Audience :: Legal Industry",
+    "Intended Audience :: Science/Research",
+]
+dependencies = [
+    "lark>=1.1.8"
 ]
 
 [project.urls]
