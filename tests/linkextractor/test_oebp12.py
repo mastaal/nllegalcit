@@ -47,6 +47,12 @@ class Oebp11Test(unittest.TestCase):
             [KamerstukCitation("I", "?", "31145", "AA")]
         )
 
+    def test_4a(self):
+        self.assertEqual(
+            parse_kamerstukcitation("Kamerstukken Eerste Kamer 31145 nr. AA"),
+            [KamerstukCitation("I", "?", "31145", "AA")]
+        )
+
     def test_5(self):
         self.assertEqual(
             parse_kamerstukcitation("Kamerstuk I 31145 AA"),

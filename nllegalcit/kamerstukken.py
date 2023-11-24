@@ -18,7 +18,7 @@ from lark import Lark, Visitor, ParseTree
 
 from nllegalcit.errors import CitationParseException
 
-re_whitespace: re.Pattern = re.compile(r"\s+")
+re_dossiernummer_separator: re.Pattern = re.compile(r"[-.\s]+")
 re_replacement_toevoeging_separator: re.Pattern = re.compile(r"[.\s-]+")
 
 kamerstukken_grammar = files("nllegalcit.grammars").joinpath("citations.lark").read_text()
@@ -121,7 +121,7 @@ class KamerstukCitationVisitor(Visitor):
         dossiernummer_toevoeging: Optional[str] = None
         for c in tree.children:
             if c.type == "kamerstukken__DOSSIERNUMMER":
-                dossiernummer = re_whitespace.sub("", c)
+                dossiernummer = re_dossiernummer_separator.sub("", c)
             elif c.type == "kamerstukken__DOSSIERNUMMER_TOEVOEGING":
                 dossiernummer_toevoeging = re_replacement_toevoeging_separator.sub("", c).replace("hoofdstuk", "")
 
@@ -135,7 +135,6 @@ class KamerstukCitationVisitor(Visitor):
         second_year = None
 
         for c in tree.children:
-            print(c, c.type)
             if first_year is None and c.type == "kamerstukken__JAAR4":
                 first_year = c
             elif c.type == "kamerstukken__JAAR4":
@@ -143,6 +142,8 @@ class KamerstukCitationVisitor(Visitor):
             elif c.type == "kamerstukken__JAAR2":
                 if first_year == "1999":
                     second_year = "2000"
+                elif first_year == "1899":
+                    second_year = "1900"
                 else:
                     second_year = f"{first_year[0:2]}{c}"
 
