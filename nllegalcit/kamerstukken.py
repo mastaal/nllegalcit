@@ -76,7 +76,12 @@ class KamerstukCitation:
 
     def __eq__(self, other) -> bool:
         try:
-            return (self.kamer == other.kamer) and (self.vergaderjaar == other.vergaderjaar) and (self.dossiernummer == other.dossiernummer) and (self.ondernummer == other.ondernummer)
+            return ((self.kamer == other.kamer) and
+                    (self.vergaderjaar == other.vergaderjaar) and
+                    (self.dossiernummer == other.dossiernummer) and
+                    (self.ondernummer == other.ondernummer) and
+                    (self.paginaverwijzing == other.paginaverwijzing) and
+                    (self.rijksdossiernummer == other.rijksdossiernummer))
         except AttributeError:
             return False
 
