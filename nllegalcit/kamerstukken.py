@@ -19,7 +19,7 @@ from lark import Lark, Visitor, ParseTree
 from nllegalcit.errors import CitationParseException
 
 re_whitespace: re.Pattern = re.compile(r"\s+")
-re_whitespace_and_dash: re.Pattern = re.compile(r"[\s-]+")
+re_replacement_toevoeging_separator: re.Pattern = re.compile(r"[.\s-]+")
 
 kamerstukken_grammar = files("nllegalcit.grammars").joinpath("citations.lark").read_text()
 
@@ -123,7 +123,7 @@ class KamerstukCitationVisitor(Visitor):
             if c.type == "kamerstukken__DOSSIERNUMMER":
                 dossiernummer = re_whitespace.sub("", c)
             elif c.type == "kamerstukken__DOSSIERNUMMER_TOEVOEGING":
-                dossiernummer_toevoeging = re_whitespace_and_dash.sub("", c).replace("hoofdstuk", "")
+                dossiernummer_toevoeging = re_replacement_toevoeging_separator.sub("", c).replace("hoofdstuk", "")
 
         if dossiernummer_toevoeging is None:
             self.citation.dossiernummer = dossiernummer
@@ -131,7 +131,22 @@ class KamerstukCitationVisitor(Visitor):
             self.citation.dossiernummer = f"{dossiernummer}-{dossiernummer_toevoeging}"
 
     def kamerstukken__vergaderjaar(self, tree: ParseTree):
-        self.citation.vergaderjaar = ''.join(tree.children)
+        first_year = None
+        second_year = None
+
+        for c in tree.children:
+            print(c, c.type)
+            if first_year is None and c.type == "kamerstukken__JAAR4":
+                first_year = c
+            elif c.type == "kamerstukken__JAAR4":
+                second_year = c
+            elif c.type == "kamerstukken__JAAR2":
+                if first_year == "1999":
+                    second_year = "2000"
+                else:
+                    second_year = f"{first_year[0:2]}{c}"
+
+        self.citation.vergaderjaar = f"{first_year}-{second_year}"
 
     def kamerstukken__ondernummer(self, tree: ParseTree):
         self.citation.ondernummer = tree.children[0]
