@@ -56,17 +56,11 @@ ONDERNUMMARAANDUIDING: "nr."i
 ondernummer: ONDERNUMMER
 ONDERNUMMER:  /[1-9][0-9]{0,4}[a-z]?/ | /[A-Z]+/
 
-paginaverwijzing: PAGINA_AANDUIDING KSSEP? pagina_range
-                | PAGINA_AANDUIDING KSSEP? PAGINA_LOS
+paginaverwijzing: PAGINA_AANDUIDING KSSEP? (pagina_range | PAGINA_LOS)
 
-PAGINA_AANDUIDING: "p."i
-                 | "pag"i
-                 | "pag."i
+PAGINA_AANDUIDING: /p(ag)?\.?/i
                  | "pagina"i
-                 | "b"i
-                 | "b."i
-                 | "blz"i
-                 | "blz."i
+                 | /b(lz)?\.?/i
                  | "bladzijde"i
 PAGINANUMMER: /\d+/
 PAGINA_LOS: PAGINANUMMER
@@ -74,13 +68,13 @@ PAGINA_START: PAGINANUMMER
 PAGINA_EIND: PAGINANUMMER
 pagina_range: PAGINA_START KSSEP? PAGINA_RANGE_AANDUIDING KSSEP? PAGINA_EIND
 PAGINA_RANGE_AANDUIDING: "e.v."
-            | "e v."
-            | "ev."
-            | ","
-            | "-"
-            | "/"
-            | "–"
-            | "–"
-            | "en"
+                       | "e v."
+                       | "ev."
+                       | ","
+                       | "-"
+                       | "/"
+                       | "–"
+                       | "–"
+                       | "en"
 
 %import unicode.WS
