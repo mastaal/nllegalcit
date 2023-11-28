@@ -15,6 +15,7 @@ from lark import Visitor, ParseTree, Token
 
 from nllegalcit.citations import Citation, KamerstukCitation, CaseLawCitation, EcliCitation
 from nllegalcit.errors import CitationParseException
+from nllegalcit.utils import normalize_nl_ecli_court
 
 re_dossiernummer_separator: re.Pattern = re.compile(r"[-.\s]+")
 re_replacement_toevoeging_separator: re.Pattern = re.compile(r"[.\s-]+")
@@ -65,7 +66,7 @@ class CaseLawCitationVisitor(Visitor):
                     cit.year = int(child)
                 elif child.type == "caselaw__NL_ECLI_COURT":
                     # TODO: Implement court name normalization
-                    cit.court = str(child)
+                    cit.court = normalize_nl_ecli_court(str(child))
                 elif child.type == "caselaw__NL_ECLI_CASENUMBER":
                     cit.casenumber = str(child)
 
