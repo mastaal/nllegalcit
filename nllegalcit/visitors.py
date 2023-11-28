@@ -1,5 +1,5 @@
 """
-    nllegalcit/kamerstukken.py
+    nllegalcit/visitors.py
 
     Copyright 2023, Martijn Staal <nllegalcit [at] martijn-staal.nl>
 
@@ -9,81 +9,15 @@
 """
 
 import re
-
-from enum import Enum
-from importlib.resources import files
 from typing import Optional
 
-from lark import Lark, Visitor, ParseTree
+from lark import Visitor, ParseTree
 
+from nllegalcit.citations import Citation, KamerstukCitation
 from nllegalcit.errors import CitationParseException
 
 re_dossiernummer_separator: re.Pattern = re.compile(r"[-.\s]+")
 re_replacement_toevoeging_separator: re.Pattern = re.compile(r"[.\s-]+")
-
-kamerstukken_grammar = files("nllegalcit.grammars").joinpath("citations.lark").read_text()
-
-
-class KamerstukCitation:
-    """Structured representation of a citation of a kamerstuk"""
-
-    class Kamer(Enum):
-        TK = "II"
-        EK = "I"
-        VV = "VV"
-
-    kamer: Kamer
-    vergaderjaar: str
-    dossiernummer: str
-    ondernummer: str
-    paginaverwijzing: Optional[str]
-    rijksdossiernummer: Optional[str]
-
-    def __init__(
-            self,
-            kamer: str,
-            vergaderjaar: str,
-            dossiernummer: str,
-            ondernummer: str,
-            paginaverwijzing=None,
-            rijksdossiernummer=None):
-        self.kamer = kamer
-        self.vergaderjaar = vergaderjaar
-        self.dossiernummer = dossiernummer
-        self.ondernummer = ondernummer
-        self.paginaverwijzing = paginaverwijzing
-        self.rijksdossiernummer = rijksdossiernummer
-
-    def __str__(self) -> str:
-        # There surely must be a better way to do this
-        if self.rijksdossiernummer is not None and self.paginaverwijzing is not None:
-            return (f"KamerstukCitation {self.kamer} {self.vergaderjaar} {self.dossiernummer}"
-                    f" ({self.rijksdossiernummer}) {self.ondernummer} {self.paginaverwijzing}")
-        if self.paginaverwijzing is not None:
-            return (f"KamerstukCitation {self.kamer} {self.vergaderjaar} {self.dossiernummer}"
-                    f"{self.ondernummer} {self.paginaverwijzing}")
-        if self.rijksdossiernummer is not None:
-            return (f"KamerstukCitation {self.kamer} {self.vergaderjaar} {self.dossiernummer}"
-                    f" ({self.rijksdossiernummer}) {self.ondernummer}")
-
-        return f"KamerstukCitation {self.kamer} {self.vergaderjaar} {self.dossiernummer} {self.ondernummer}"
-
-    def __repr__(self) -> str:
-        if self.paginaverwijzing is not None:
-            return f"Kamerstukken {self.kamer} {self.vergaderjaar} {self.dossiernummer} {self.ondernummer} {self.paginaverwijzing}"
-
-        return f"Kamerstukken {self.kamer} {self.vergaderjaar} {self.dossiernummer} {self.ondernummer}"
-
-    def __eq__(self, other) -> bool:
-        try:
-            return ((self.kamer == other.kamer) and
-                    (self.vergaderjaar == other.vergaderjaar) and
-                    (self.dossiernummer == other.dossiernummer) and
-                    (self.ondernummer == other.ondernummer) and
-                    (self.paginaverwijzing == other.paginaverwijzing) and
-                    (self.rijksdossiernummer == other.rijksdossiernummer))
-        except AttributeError:
-            return False
 
 
 class CitationVisitor(Visitor):
@@ -92,7 +26,7 @@ class CitationVisitor(Visitor):
     def __init__(self):
         super().__init__()
 
-        self.citations: list[KamerstukCitation] = []
+        self.citations: list[Citation] = []
 
     def kamerstuk(self, tree: ParseTree):
         """Create a KamerstukCitation from a kamerstuk ParseTree rule"""
@@ -189,18 +123,16 @@ class KamerstukCitationVisitor(Visitor):
             self.citation.paginaverwijzing = ','.join(paginas)
 
 
-parser = Lark.open(
-    "grammars/citations.lark",
-    rel_to=__file__,
-    parser="earley"
-)
+class CitationVisitorOnlyKamerstukCitations(Visitor):
+    """Generic visitor to create Citation objects for a ParseTree"""
 
+    def __init__(self):
+        super().__init__()
 
-def parse_kamerstukcitation(raw_citation: str) -> list[KamerstukCitation]:
-    "Parse a raw kamerstuk citation"
+        self.citations: list[KamerstukCitation] = []
 
-    parsetree = parser.parse(raw_citation)
-    v = CitationVisitor()
-    v.visit(parsetree)
-
-    return v.citations
+    def kamerstuk(self, tree: ParseTree):
+        """Create a KamerstukCitation from a kamerstuk ParseTree rule"""
+        v = KamerstukCitationVisitor()
+        v.visit(tree)
+        self.citations.append(v.citation)
