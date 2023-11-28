@@ -52,6 +52,7 @@ To find all supported citations in some string, we simply do:
    :caption: Contents:
 
    kamerstukken.rst
+   modules.rst
 
 
 
