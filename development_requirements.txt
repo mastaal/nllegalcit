@@ -17,3 +17,5 @@ build
 
 requests
 Jinja2
+sphinx
+myst-parser
