@@ -16,6 +16,32 @@ class Citation():
     """Generic citation"""
 
 
+class CaseLawCitation(Citation):
+    """Generic citation to case law"""
+
+
+class EcliCitation(CaseLawCitation):
+    """Case law Citation for ECLI-citations"""
+
+    country: str
+    court: str
+    year: int
+    casenumber: str
+
+    def __init__(self, country: str, court: str, year: int, casenumber: str):
+
+        self.country = country
+        self.court = court
+        self.year = year
+        self.casenumber = casenumber
+
+    def __str__(self) -> str:
+        return f"ECLI:{self.country}:{self.court}:{self.year}:{self.casenumber}"
+
+    def __repr__(self) -> str:
+        return self.__str__()
+
+
 class KamerstukCitation(Citation):
     """Structured representation of a citation of a kamerstuk"""
 
