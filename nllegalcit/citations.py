@@ -50,7 +50,7 @@ class EcliCitation(CaseLawCitation):
                 (self.casenumber == __value.casenumber)
             )
         else:
-            False
+            return False
 
 
 class KamerstukCitation(Citation):
@@ -99,17 +99,17 @@ class KamerstukCitation(Citation):
 
     def __repr__(self) -> str:
         if self.paginaverwijzing is not None:
-            return f"Kamerstukken {self.kamer} {self.vergaderjaar} {self.dossiernummer} {self.ondernummer} {self.paginaverwijzing}"
+            return f"Kamerstukken {self.kamer} {self.vergaderjaar}, {self.dossiernummer}, nr. {self.ondernummer} p. {self.paginaverwijzing}"
 
-        return f"Kamerstukken {self.kamer} {self.vergaderjaar} {self.dossiernummer} {self.ondernummer}"
+        return f"Kamerstukken {self.kamer} {self.vergaderjaar}, {self.dossiernummer}, nr. {self.ondernummer}"
 
     def __eq__(self, other) -> bool:
-        try:
+        if isinstance(other, KamerstukCitation):
             return ((self.kamer == other.kamer) and
                     (self.vergaderjaar == other.vergaderjaar) and
                     (self.dossiernummer == other.dossiernummer) and
                     (self.ondernummer == other.ondernummer) and
                     (self.paginaverwijzing == other.paginaverwijzing) and
                     (self.rijksdossiernummer == other.rijksdossiernummer))
-        except AttributeError:
+        else:
             return False
