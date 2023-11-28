@@ -11,9 +11,9 @@
 import re
 from typing import Optional
 
-from lark import Visitor, ParseTree
+from lark import Visitor, ParseTree, Token
 
-from nllegalcit.citations import Citation, KamerstukCitation
+from nllegalcit.citations import Citation, KamerstukCitation, CaseLawCitation, EcliCitation
 from nllegalcit.errors import CitationParseException
 
 re_dossiernummer_separator: re.Pattern = re.compile(r"[-.\s]+")
@@ -33,6 +33,43 @@ class CitationVisitor(Visitor):
         v = KamerstukCitationVisitor()
         v.visit(tree)
         self.citations.append(v.citation)
+
+    def case_law(self, tree: ParseTree):
+        """Create a CaseLawCitation from a case_law parse rule"""
+        v = CaseLawCitationVisitor()
+        v.visit(tree)
+        if v.citation is not None:
+            self.citations.append(v.citation)
+
+
+class CaseLawCitationVisitor(Visitor):
+    """Visitor class to create a CaseLawCitation from the parse tree"""
+
+    # pylint: disable=missing-function-docstring
+
+    citation: Optional[CaseLawCitation]
+
+    def __init__(self):
+        super().__init__()
+
+        self.citation = None
+
+    def caselaw__nl_ecli(self, tree: ParseTree):
+        print(tree.children)
+
+        cit = EcliCitation("NL", "?", -1, "?")
+
+        for child in tree.children:
+            if isinstance(child, Token):
+                if child.type == "caselaw__ECLI_YEAR":
+                    cit.year = int(child)
+                elif child.type == "caselaw__NL_ECLI_COURT":
+                    # TODO: Implement court name normalization
+                    cit.court = str(child)
+                elif child.type == "caselaw__NL_ECLI_CASENUMBER":
+                    cit.casenumber = str(child)
+
+        self.citation = cit
 
 
 class KamerstukCitationVisitor(Visitor):

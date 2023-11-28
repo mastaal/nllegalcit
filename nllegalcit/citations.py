@@ -41,6 +41,17 @@ class EcliCitation(CaseLawCitation):
     def __repr__(self) -> str:
         return self.__str__()
 
+    def __eq__(self, __value: object) -> bool:
+        if isinstance(__value, EcliCitation):
+            return (
+                (self.country == __value.country) and
+                (self.court == __value.court) and
+                (self.year == __value.year) and
+                (self.casenumber == __value.casenumber)
+            )
+        else:
+            False
+
 
 class KamerstukCitation(Citation):
     """Structured representation of a citation of a kamerstuk"""
