@@ -10,7 +10,7 @@ kamerstuk: (KSLABEL KSSEP)? kamer (KSSEP vergaderjaar_met_pre)? (KSSEP | "-") do
 
 KSLABEL: /kamerstuk(ken)?/i
 
-KSSEP: /[,\s]+/
+KSSEP: ("," | WS)+
 
 kamer:  TK | EK | VV
 TK: "II"
@@ -56,13 +56,12 @@ ONDERNUMMARAANDUIDING: "nr."i
 ondernummer: ONDERNUMMER
 ONDERNUMMER:  /[1-9][0-9]{0,4}[a-z]?/ | /[A-Z]+/
 
-paginaverwijzing: PAGINA_AANDUIDING KSSEP? (pagina_range | PAGINA_LOS)
+paginaverwijzing: PAGINA_AANDUIDING KSSEP? (PAGINA_LOS | pagina_range)
 
-PAGINA_AANDUIDING: /p(ag)?\.?/i
-                 | "pagina"i
+PAGINA_AANDUIDING: /p(ag(ina)?)?\.?/i
                  | /b(lz)?\.?/i
                  | "bladzijde"i
-PAGINANUMMER: /\d+/
+PAGINANUMMER: /[0-9]+/
 PAGINA_LOS: PAGINANUMMER
 PAGINA_START: PAGINANUMMER
 PAGINA_EIND: PAGINANUMMER
