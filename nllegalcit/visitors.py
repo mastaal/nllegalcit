@@ -1,5 +1,5 @@
 """
-    nllegalcit/kamerstukken.py
+    nllegalcit/visitors.py
 
     Copyright 2023, Martijn Staal <nllegalcit [at] martijn-staal.nl>
 
@@ -9,81 +9,16 @@
 """
 
 import re
-
-from enum import Enum
-from importlib.resources import files
 from typing import Optional
 
-from lark import Lark, Visitor, ParseTree
+from lark import Visitor, ParseTree, Token
 
+from nllegalcit.citations import Citation, KamerstukCitation, CaseLawCitation, EcliCitation
 from nllegalcit.errors import CitationParseException
+from nllegalcit.utils import normalize_nl_ecli_court
 
 re_dossiernummer_separator: re.Pattern = re.compile(r"[-.\s]+")
 re_replacement_toevoeging_separator: re.Pattern = re.compile(r"[.\s-]+")
-
-kamerstukken_grammar = files("nllegalcit.grammars").joinpath("citations.lark").read_text()
-
-
-class KamerstukCitation:
-    """Structured representation of a citation of a kamerstuk"""
-
-    class Kamer(Enum):
-        TK = "II"
-        EK = "I"
-        VV = "VV"
-
-    kamer: Kamer
-    vergaderjaar: str
-    dossiernummer: str
-    ondernummer: str
-    paginaverwijzing: Optional[str]
-    rijksdossiernummer: Optional[str]
-
-    def __init__(
-            self,
-            kamer: str,
-            vergaderjaar: str,
-            dossiernummer: str,
-            ondernummer: str,
-            paginaverwijzing=None,
-            rijksdossiernummer=None):
-        self.kamer = kamer
-        self.vergaderjaar = vergaderjaar
-        self.dossiernummer = dossiernummer
-        self.ondernummer = ondernummer
-        self.paginaverwijzing = paginaverwijzing
-        self.rijksdossiernummer = rijksdossiernummer
-
-    def __str__(self) -> str:
-        # There surely must be a better way to do this
-        if self.rijksdossiernummer is not None and self.paginaverwijzing is not None:
-            return (f"KamerstukCitation {self.kamer} {self.vergaderjaar} {self.dossiernummer}"
-                    f" ({self.rijksdossiernummer}) {self.ondernummer} {self.paginaverwijzing}")
-        if self.paginaverwijzing is not None:
-            return (f"KamerstukCitation {self.kamer} {self.vergaderjaar} {self.dossiernummer}"
-                    f"{self.ondernummer} {self.paginaverwijzing}")
-        if self.rijksdossiernummer is not None:
-            return (f"KamerstukCitation {self.kamer} {self.vergaderjaar} {self.dossiernummer}"
-                    f" ({self.rijksdossiernummer}) {self.ondernummer}")
-
-        return f"KamerstukCitation {self.kamer} {self.vergaderjaar} {self.dossiernummer} {self.ondernummer}"
-
-    def __repr__(self) -> str:
-        if self.paginaverwijzing is not None:
-            return f"Kamerstukken {self.kamer} {self.vergaderjaar} {self.dossiernummer} {self.ondernummer} {self.paginaverwijzing}"
-
-        return f"Kamerstukken {self.kamer} {self.vergaderjaar} {self.dossiernummer} {self.ondernummer}"
-
-    def __eq__(self, other) -> bool:
-        try:
-            return ((self.kamer == other.kamer) and
-                    (self.vergaderjaar == other.vergaderjaar) and
-                    (self.dossiernummer == other.dossiernummer) and
-                    (self.ondernummer == other.ondernummer) and
-                    (self.paginaverwijzing == other.paginaverwijzing) and
-                    (self.rijksdossiernummer == other.rijksdossiernummer))
-        except AttributeError:
-            return False
 
 
 class CitationVisitor(Visitor):
@@ -92,13 +27,99 @@ class CitationVisitor(Visitor):
     def __init__(self):
         super().__init__()
 
-        self.citations: list[KamerstukCitation] = []
+        self.citations: list[Citation] = []
 
     def kamerstuk(self, tree: ParseTree):
         """Create a KamerstukCitation from a kamerstuk ParseTree rule"""
         v = KamerstukCitationVisitor()
         v.visit(tree)
         self.citations.append(v.citation)
+
+    def case_law(self, tree: ParseTree):
+        """Create a CaseLawCitation from a case_law parse rule"""
+        v = CaseLawCitationVisitor()
+        v.visit(tree)
+        if v.citation is not None:
+            self.citations.append(v.citation)
+
+
+class CaseLawCitationVisitor(Visitor):
+    """Visitor class to create a CaseLawCitation from the parse tree"""
+
+    # pylint: disable=missing-function-docstring
+
+    citation: Optional[CaseLawCitation]
+
+    def __init__(self):
+        super().__init__()
+
+        self.citation = None
+
+    def caselaw__nl_ecli(self, tree: ParseTree):
+        cit = EcliCitation("NL", "?", -1, "?")
+
+        for child in tree.children:
+            if isinstance(child, Token):
+                if child.type == "caselaw__ECLI_YEAR":
+                    cit.year = int(child)
+                elif child.type == "caselaw__NL_ECLI_COURT":
+                    # TODO: Implement court name normalization
+                    cit.court = normalize_nl_ecli_court(str(child))
+                elif child.type == "caselaw__NL_ECLI_CASENUMBER":
+                    cit.casenumber = str(child)
+
+        self.citation = cit
+
+    def caselaw__eu_ecli(self, tree: ParseTree):
+        year: int
+        court: str
+        casenumber: str
+
+        for child in tree.children:
+            if isinstance(child, Token):
+                if child.type == "caselaw__ECLI_YEAR":
+                    year = int(child)
+                elif child.type == "caselaw__EU_ECLI_COURT":
+                    court = str(child)
+                elif child.type == "caselaw__EU_ECLI_CASENUMBER":
+                    casenumber = str(child)
+
+        self.citation = EcliCitation("EU", court, year, casenumber)
+
+    def caselaw__ce_ecli(self, tree: ParseTree):
+        year: int
+        court: str
+        casenumber: str
+
+        for child in tree.children:
+            if isinstance(child, Token):
+                if child.type == "caselaw__ECLI_YEAR":
+                    year = int(child)
+                elif child.type == "caselaw__CE_ECLI_COURT":
+                    court = str(child)
+                elif child.type == "caselaw__CE_ECLI_CASENUMBER":
+                    casenumber = str(child)
+
+        self.citation = EcliCitation("CE", court, year, casenumber)
+
+    def caselaw__other_ecli(self, tree: ParseTree):
+        year: int
+        country: str
+        court: str
+        casenumber: str
+
+        for child in tree.children:
+            if isinstance(child, Token):
+                if child.type == "caselaw__ECLI_YEAR":
+                    year = int(child)
+                elif child.type == "caselaw__OTHER_ECLI_COUNTRY_CODE":
+                    country = str(child)
+                elif child.type == "caselaw__OTHER_ECLI_COURT":
+                    court = str(child)
+                elif child.type == "caselaw__OTHER_ECLI_CASENUMBER":
+                    casenumber = str(child)
+
+        self.citation = EcliCitation(country, court, year, casenumber)
 
 
 class KamerstukCitationVisitor(Visitor):
@@ -189,18 +210,16 @@ class KamerstukCitationVisitor(Visitor):
             self.citation.paginaverwijzing = ','.join(paginas)
 
 
-parser = Lark.open(
-    "grammars/citations.lark",
-    rel_to=__file__,
-    parser="earley"
-)
+class CitationVisitorOnlyKamerstukCitations(Visitor):
+    """Generic visitor to create Citation objects for a ParseTree"""
 
+    def __init__(self):
+        super().__init__()
 
-def parse_kamerstukcitation(raw_citation: str) -> list[KamerstukCitation]:
-    "Parse a raw kamerstuk citation"
+        self.citations: list[KamerstukCitation] = []
 
-    parsetree = parser.parse(raw_citation)
-    v = CitationVisitor()
-    v.visit(parsetree)
-
-    return v.citations
+    def kamerstuk(self, tree: ParseTree):
+        """Create a KamerstukCitation from a kamerstuk ParseTree rule"""
+        v = KamerstukCitationVisitor()
+        v.visit(tree)
+        self.citations.append(v.citation)

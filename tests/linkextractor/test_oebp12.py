@@ -17,7 +17,8 @@
 
 import unittest
 
-from nllegalcit.kamerstukken import KamerstukCitation, parse_kamerstukcitation
+from nllegalcit.citations import KamerstukCitation
+from nllegalcit.parser import parse_kamerstukcitation
 
 
 class Oebp11Test(unittest.TestCase):

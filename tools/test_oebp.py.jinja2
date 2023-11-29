@@ -17,7 +17,9 @@
 
 import unittest
 
-from nllegalcit.kamerstukken import KamerstukCitation, parse_kamerstukcitation
+// NOTE: Please add the correct used citation types here.
+// from nllegalcit.citations import 
+from nllegalcit.parser import parse_citations
 
 
 class {{testclassname}}(unittest.TestCase):
@@ -26,7 +28,7 @@ class {{testclassname}}(unittest.TestCase):
 {% for test_case in test_cases %}
     def {{test_case.name}}(self):
         self.assertEqual(
-            parse_kamerstukcitation("{{test_case.input}}"),
+            parse_citations("{{test_case.input}}"),
             []
         )
 {% endfor %}

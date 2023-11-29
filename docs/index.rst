@@ -29,7 +29,7 @@ The following types of citations are implemented, work in progress, or planned:
 
    "Kamerstukken (Dutch parliamentary documents)", "⚠️ Work in progress", "Works reasonably well for modern (>1995) citations following the guidelines. Older citations may work. Page number recognition is unreliable."
    "Handelingen (Dutch parliamentary minutes)", "🗓️ Planned", ""
-   "ECLI case law citations", "🗓️ Planned", ""
+   "ECLI case law citations", "⚠️ Work in progress", "Tested to work outside of other textual context. Paragraph information is not parsed."
    "Dutch case law other than ECLI", "🗓️ Planned", ""
    "Dutch national laws", "🗓️ Planned", ""
    "Dutch treaties", "🗓️ Planned", ""
@@ -39,20 +39,23 @@ The following types of citations are implemented, work in progress, or planned:
 General usage
 -------------
 
-To find all supported citations in some string, we simply do:
+To find all supported citations in some string, we use the following general function:
 
+.. autofunction:: nllegalcit.parser.parse_citations
+
+This gives us a list of all recognized citations in the input:
 ::
 
    >>> from nllegalcit.parser import parse_citations
    >>> parse_citations("Kamerstukken I 1979/80, 15 516, nr. 42e, blz. 7")
-
+   [Kamerstukken I 1979-1980, 15516, nr. 42e p. 7]
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
    kamerstukken.rst
-   modules.rst
+   caselaw.rst
 
 
 

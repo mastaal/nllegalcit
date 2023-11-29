@@ -1,0 +1,45 @@
+// Copyright 2023, Martijn Staal <nllegalcit [at] martijn-staal.nl>
+// SPDX-License-Identifier: EUPL-1.2
+// Available under the EUPL-1.2, or, at your option, any later version.
+// Parser grammar for Dutch case law citations
+// This is essentially a (customized) Lark-translation from the (EUPL-1.2 licensed) Waxeye grammar used by
+// KOOP, which can be found here: https://gitlab.com/koop/ld/lx/linkextractor/-/tree/main/src/webapp/links/grammars (specifically, the 'jur-citatie' grammars)
+
+case_law: nl_ecli | eu_ecli | ce_ecli | other_ecli
+
+// ECLI case law citations
+
+ECLI_SEPARATOR: WS? (":" | ";") WS?
+ECLI_START: "ECLI"
+ECLI_YEAR: ("19" | "20") /[0-9]{2}/
+
+// NL ECLI's
+// For Dutch ECLI's, we're lax and allow the "ECLI:" and/or "NL:" part to be omitted.
+nl_ecli: (ECLI_START ECLI_SEPARATOR)? (NL_ECLI_COUNTRY_CODE ECLI_SEPARATOR)? NL_ECLI_COURT ECLI_SEPARATOR ECLI_YEAR ECLI_SEPARATOR NL_ECLI_CASENUMBER
+
+NL_ECLI_COUNTRY_CODE: "nl"i
+NL_ECLI_COURT: /[a-zA-Z]{2,7}/
+NL_ECLI_CASENUMBER: /[a-zA-Z]{2}/ WS? /[0-9]{4}/ | /[1-9][0-9]*/
+
+// EU ECLI's
+eu_ecli: (ECLI_START ECLI_SEPARATOR)? EU_ECLI_COUNTRY_CODE ECLI_SEPARATOR EU_ECLI_COURT ECLI_SEPARATOR ECLI_YEAR ECLI_SEPARATOR EU_ECLI_CASENUMBER
+
+EU_ECLI_COUNTRY_CODE: "eu"i
+EU_ECLI_COURT: "C" | "T" | "F"
+EU_ECLI_CASENUMBER: /[1-9][0-9]*/
+
+// CE ECLI's
+ce_ecli: (ECLI_START ECLI_SEPARATOR)? (CE_ECLI_COUNTRY_CODE ECLI_SEPARATOR)? CE_ECLI_COURT ECLI_SEPARATOR ECLI_YEAR ECLI_SEPARATOR CE_ECLI_CASENUMBER
+
+CE_ECLI_COUNTRY_CODE: "ce"i
+CE_ECLI_COURT: "ECHR"
+CE_ECLI_CASENUMBER: /[0-9]{4}/ ("JUD" | "DEC" | "REP" ) /[0-9]{9}/
+
+// Other ECLI's
+other_ecli: ECLI_START ECLI_SEPARATOR OTHER_ECLI_COUNTRY_CODE ECLI_SEPARATOR OTHER_ECLI_COURT ECLI_SEPARATOR ECLI_YEAR ECLI_SEPARATOR OTHER_ECLI_CASENUMBER
+
+OTHER_ECLI_COUNTRY_CODE: "EP" | "CZ" | "DE" | "ES" | "FR" | "IT" | "AT" | "SI" | "SK" | "FI" | "BE" | "BG" | "DK" | "EE" | "IE" | "EL" | "HR" | "CY" | "LV" | "LT" | "LU" | "HU" | "MT" | "PL" | "PT" | "RO" | "SE" | "UK"
+OTHER_ECLI_COURT: /[a-zA-Z][a-zA-Z0-9]*/
+OTHER_ECLI_CASENUMBER: /[a-zA-Z0-9][a-zA-Z0-9.]*/
+
+%import unicode.WS
