@@ -18,9 +18,9 @@ The following types of citations are implemented, work in progress, or planned:
 
 | Citation type | Implementation status | Implementation notes |
 |---------------|-----------------------|----------------------|
-| Kamerstukken (Dutch parliamentary documents)  | ⚠️ Work in progress      | Works reasonably well for modern (>1995) citations following the guidelines. Older citations may work. Page number recognition is unreliable. |
+| Kamerstukken (Dutch parliamentary documents)  | ⚠️ Work in progress      | Works reasonably well for modern (>1995) citations following the guidelines. Older citations may work. Simple page number notations work. |
 | Handelingen (Dutch parliamentary minutes)   | 🗓️ Planned               |
-| ECLI case law citations  | ⚠️ Work in progress    | |
+| ECLI case law citations  | ⚠️ Work in progress    | Seems to work, but more testing is needed. Paragraph information is not parsed. |
 | Dutch case law other than ECLI | 🗓️ Planned |
 | Dutch national laws | 🗓️ Planned |
 | Dutch treaties | 🗓️ Planned |
