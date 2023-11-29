@@ -56,8 +56,6 @@ class CaseLawCitationVisitor(Visitor):
         self.citation = None
 
     def caselaw__nl_ecli(self, tree: ParseTree):
-        print(tree.children)
-
         cit = EcliCitation("NL", "?", -1, "?")
 
         for child in tree.children:
@@ -71,6 +69,57 @@ class CaseLawCitationVisitor(Visitor):
                     cit.casenumber = str(child)
 
         self.citation = cit
+
+    def caselaw__eu_ecli(self, tree: ParseTree):
+        year: int
+        court: str
+        casenumber: str
+
+        for child in tree.children:
+            if isinstance(child, Token):
+                if child.type == "caselaw__ECLI_YEAR":
+                    year = int(child)
+                elif child.type == "caselaw__EU_ECLI_COURT":
+                    court = str(child)
+                elif child.type == "caselaw__EU_ECLI_CASENUMBER":
+                    casenumber = str(child)
+
+        self.citation = EcliCitation("EU", court, year, casenumber)
+
+    def caselaw__ce_ecli(self, tree: ParseTree):
+        year: int
+        court: str
+        casenumber: str
+
+        for child in tree.children:
+            if isinstance(child, Token):
+                if child.type == "caselaw__ECLI_YEAR":
+                    year = int(child)
+                elif child.type == "caselaw__CE_ECLI_COURT":
+                    court = str(child)
+                elif child.type == "caselaw__CE_ECLI_CASENUMBER":
+                    casenumber = str(child)
+
+        self.citation = EcliCitation("CE", court, year, casenumber)
+
+    def caselaw__other_ecli(self, tree: ParseTree):
+        year: int
+        country: str
+        court: str
+        casenumber: str
+
+        for child in tree.children:
+            if isinstance(child, Token):
+                if child.type == "caselaw__ECLI_YEAR":
+                    year = int(child)
+                elif child.type == "caselaw__OTHER_ECLI_COUNTRY_CODE":
+                    country = str(child)
+                elif child.type == "caselaw__OTHER_ECLI_COURT":
+                    court = str(child)
+                elif child.type == "caselaw__OTHER_ECLI_CASENUMBER":
+                    casenumber = str(child)
+
+        self.citation = EcliCitation(country, court, year, casenumber)
 
 
 class KamerstukCitationVisitor(Visitor):
