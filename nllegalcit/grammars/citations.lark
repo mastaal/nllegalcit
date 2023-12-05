@@ -5,13 +5,13 @@
 ?start: (kamerstuk | case_law | text)+
 
 text: punctuation | NUMBER | WORD | WS
-punctuation: APOSTROPHE | QUOTATIONMARK | HYPHEN | PUNCTUATIONMARKS
+punctuation: APOSTROPHE | QUOTATIONMARK | HYPHEN | PUNCTUATIONMARKS | SYMBOL
 APOSTROPHE: /[‘`'′´’]/
 QUOTATIONMARK: /[‘’“”"«»]/
 HYPHEN: /[-‐‑‒–—―−]/
-PUNCTUATIONMARKS: /[\/\-.,:;_+*?!()]/
-numberword: NUMBER | WORD
+PUNCTUATIONMARKS: /[%=&\/\-.,:;_+*?!()­]/ // The space-like character is the Unicode soft-hyphen U+00AD
 NUMBER: /\d+([.,]?\d+)*/
+SYMBOL: /\W/
 
 UNICODE_LETTER: /\w/
 WORD: UNICODE_LETTER+
