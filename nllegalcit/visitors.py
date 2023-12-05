@@ -11,7 +11,7 @@
 import re
 from typing import Optional
 
-from lark import Visitor, ParseTree, Token
+from lark import Visitor, ParseTree, Token, Tree
 
 from nllegalcit.citations import Citation, KamerstukCitation, CaseLawCitation, EcliCitation
 from nllegalcit.errors import CitationParseException
@@ -133,12 +133,16 @@ class KamerstukCitationVisitor(Visitor):
         self.citation = KamerstukCitation("?", "?", "?", "?")
 
     def kamerstukken__kamer(self, tree: ParseTree):
-        if tree.children[0].type == "kamerstukken__TK":
-            self.citation.kamer = "II"
-        elif tree.children[0].type == "kamerstukken__EK":
-            self.citation.kamer = "I"
-        elif tree.children[0].type == "kamerstukken__VV":
-            self.citation.kamer = "VV"
+        kamer_token = tree.children[0]
+        if isinstance(kamer_token, Token):
+            if kamer_token.type == "kamerstukken__TK":
+                self.citation.kamer = "II"
+            elif kamer_token.type == "kamerstukken__EK":
+                self.citation.kamer = "I"
+            elif kamer_token.type == "kamerstukken__VV":
+                self.citation.kamer = "VV"
+            else:
+                raise CitationParseException("Invalid Kamer in KamerstukCitation")
         else:
             raise CitationParseException("Invalid Kamer in KamerstukCitation")
 
@@ -146,10 +150,11 @@ class KamerstukCitationVisitor(Visitor):
         dossiernummer = "?"
         dossiernummer_toevoeging: Optional[str] = None
         for c in tree.children:
-            if c.type == "kamerstukken__DOSSIERNUMMER":
-                dossiernummer = re_dossiernummer_separator.sub("", c)
-            elif c.type == "kamerstukken__DOSSIERNUMMER_TOEVOEGING":
-                dossiernummer_toevoeging = re_replacement_toevoeging_separator.sub("", c).replace("hoofdstuk", "")
+            if isinstance(c, Token):
+                if c.type == "kamerstukken__DOSSIERNUMMER":
+                    dossiernummer = re_dossiernummer_separator.sub("", c)
+                elif c.type == "kamerstukken__DOSSIERNUMMER_TOEVOEGING":
+                    dossiernummer_toevoeging = re_replacement_toevoeging_separator.sub("", c).replace("hoofdstuk", "")
 
         if dossiernummer_toevoeging is None:
             self.citation.dossiernummer = str(dossiernummer)
@@ -161,48 +166,50 @@ class KamerstukCitationVisitor(Visitor):
         second_year = None
 
         for c in tree.children:
-            if first_year is None and c.type == "kamerstukken__JAAR4":
-                first_year = str(c)
-            elif c.type == "kamerstukken__JAAR4":
-                second_year = str(c)
-            elif c.type == "kamerstukken__JAAR2":
-                if first_year == "1999":
-                    second_year = "2000"
-                elif first_year == "1899":
-                    second_year = "1900"
-                else:
-                    second_year = f"{first_year[0:2]}{str(c)}"
+            if isinstance(c, Token):
+                if first_year is None and c.type == "kamerstukken__JAAR4":
+                    first_year = str(c)
+                elif c.type == "kamerstukken__JAAR4":
+                    second_year = str(c)
+                elif c.type == "kamerstukken__JAAR2":
+                    if first_year == "1999":
+                        second_year = "2000"
+                    elif first_year == "1899":
+                        second_year = "1900"
+                    else:
+                        if first_year is not None:
+                            second_year = f"{first_year[0:2]}{str(c)}"
+                        else:
+                            raise CitationParseException("First year is none")
 
         self.citation.vergaderjaar = f"{first_year}-{second_year}"
 
     def kamerstukken__ondernummer(self, tree: ParseTree):
-        self.citation.ondernummer = tree.children[0]
+        self.citation.ondernummer = str(tree.children[0])
 
     def kamerstukken__paginaverwijzing(self, tree: ParseTree):
         paginas_los: list[str] = []
         for c in tree.children:
-            try:
+            if isinstance(c, Token):
                 if c.type == "kamerstukken__PAGINA_LOS":
                     paginas_los.append(str(c))
-            except AttributeError:
-                pass
+
         pagina_ranges: list[str] = []
         for c in tree.children:
-            try:
+            if isinstance(c, Tree):
                 if c.data == "kamerstukken__pagina_range":
                     start = None
                     end = None
                     for d in c.children:
-                        if d.type == "kamerstukken__PAGINA_START":
-                            start = str(d)
-                        elif d.type == "kamerstukken__PAGINA_EIND":
-                            end = str(d)
+                        if isinstance(d, Token):
+                            if d.type == "kamerstukken__PAGINA_START":
+                                start = str(d)
+                            elif d.type == "kamerstukken__PAGINA_EIND":
+                                end = str(d)
                     if end is None:
                         pagina_ranges.append(f"{start}-")
                     else:
                         pagina_ranges.append(f"{start}-{end}")
-            except AttributeError:
-                pass
         paginas = paginas_los + pagina_ranges
         if len(paginas) == 1:
             self.citation.paginaverwijzing = paginas[0]

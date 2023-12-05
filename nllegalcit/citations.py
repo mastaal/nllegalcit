@@ -76,7 +76,7 @@ class KamerstukCitation(Citation):
             ondernummer: str,
             paginaverwijzing=None,
             rijksdossiernummer=None):
-        self.kamer = kamer
+        self.kamer = kamer  # type: ignore
         self.vergaderjaar = vergaderjaar
         self.dossiernummer = dossiernummer
         self.ondernummer = ondernummer
