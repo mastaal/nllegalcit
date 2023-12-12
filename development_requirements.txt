@@ -4,6 +4,7 @@
 pylint
 flake8
 mypy
+types-requests>=2.31.0.10
 
 pytest
 
@@ -15,7 +16,6 @@ pipdeptree>=2.13.0
 
 build
 
-requests
 Jinja2
 sphinx
 myst-parser
