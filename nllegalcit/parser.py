@@ -8,7 +8,14 @@
     SPDX-License-Identifier: EUPL-1.2
 """
 
+import io
+import pathlib
+from typing import Any, IO
+
+import requests
+
 from lark import Lark
+from pypdf import PdfReader
 
 from nllegalcit.citations import Citation, KamerstukCitation
 from nllegalcit.visitors import CitationVisitor, CitationVisitorOnlyKamerstukCitations
@@ -21,7 +28,7 @@ parser = Lark.open(
 
 
 def parse_citations(text: str) -> list[Citation]:
-    "Parse any supported citation in a given text"
+    """Parse any supported citation in a given text."""
 
     parsetree = parser.parse(text)
     v = CitationVisitor()
@@ -30,8 +37,33 @@ def parse_citations(text: str) -> list[Citation]:
     return v.citations
 
 
+def parse_citations_from_pdf(pdffile: str | IO[Any] | pathlib.Path) -> list[Citation]:
+    """Parse any supported citations in a given PDF file.
+
+    Reading the PDF file is done via pypdf. The pdffile may be any file object or a path
+    to the pdf file.
+    """
+
+    reader = PdfReader(pdffile)
+
+    pdf_text: str = ""
+
+    for page in reader.pages:
+        pdf_text += page.extract_text()
+
+    return parse_citations(pdf_text)
+
+
+def parse_citations_from_pdf_url(url: str) -> list[Citation]:
+    """Parse any supported citations in a PDF which is located at the given URL."""
+
+    pdf_response = requests.get(url)
+
+    return parse_citations_from_pdf(io.BytesIO(pdf_response.content))
+
+
 def parse_kamerstukcitation(text: str) -> list[KamerstukCitation]:
-    "Parse only KamerstukCitations in a given text"
+    """Parse only KamerstukCitations in a given text."""
 
     parsetree = parser.parse(text)
     v = CitationVisitorOnlyKamerstukCitations()
