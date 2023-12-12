@@ -15,6 +15,8 @@ from typing import Optional
 class Citation():
     """Generic citation"""
 
+    matched_text: str
+
 
 class CaseLawCitation(Citation):
     """Generic citation to case law"""

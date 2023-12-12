@@ -15,7 +15,7 @@ from lark import Visitor, ParseTree, Token, Tree
 
 from nllegalcit.citations import Citation, KamerstukCitation, CaseLawCitation, EcliCitation
 from nllegalcit.errors import CitationParseException
-from nllegalcit.utils import normalize_nl_ecli_court
+from nllegalcit.utils import normalize_nl_ecli_court, lark_tree_to_str
 
 re_dossiernummer_separator: re.Pattern = re.compile(r"[-.\s]+")
 re_replacement_toevoeging_separator: re.Pattern = re.compile(r"[.\s-]+")
@@ -33,6 +33,7 @@ class CitationVisitor(Visitor):
         """Create a KamerstukCitation from a kamerstuk ParseTree rule"""
         v = KamerstukCitationVisitor()
         v.visit(tree)
+        v.citation.matched_text = lark_tree_to_str(tree)
         self.citations.append(v.citation)
 
     def case_law(self, tree: ParseTree):
@@ -40,6 +41,7 @@ class CitationVisitor(Visitor):
         v = CaseLawCitationVisitor()
         v.visit(tree)
         if v.citation is not None:
+            v.citation.matched_text = lark_tree_to_str(tree)
             self.citations.append(v.citation)
 
 
@@ -229,4 +231,5 @@ class CitationVisitorOnlyKamerstukCitations(Visitor):
         """Create a KamerstukCitation from a kamerstuk ParseTree rule"""
         v = KamerstukCitationVisitor()
         v.visit(tree)
+        v.citation.matched_text = lark_tree_to_str(tree)
         self.citations.append(v.citation)
