@@ -14,8 +14,7 @@
 
 import unittest
 
-from nllegalcit.citations import EcliCitation
-from nllegalcit.parser import parse_citations
+from nllegalcit import EcliCitation, parse_citations
 
 
 class EcliCitationTests(unittest.TestCase):

@@ -13,9 +13,9 @@ from typing import Optional
 
 from lark import Visitor, ParseTree, Token, Tree
 
-from nllegalcit.citations import Citation, KamerstukCitation, CaseLawCitation, EcliCitation
-from nllegalcit.errors import CitationParseException
-from nllegalcit.utils import normalize_nl_ecli_court, lark_tree_to_str
+from .citations import Citation, KamerstukCitation, CaseLawCitation, EcliCitation
+from .errors import CitationParseException
+from .utils import normalize_nl_ecli_court, lark_tree_to_str
 
 re_dossiernummer_separator: re.Pattern = re.compile(r"[-.\s]+")
 re_replacement_toevoeging_separator: re.Pattern = re.compile(r"[.\s-]+")

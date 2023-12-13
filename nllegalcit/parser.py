@@ -17,8 +17,8 @@ import requests
 from lark import Lark
 from pypdf import PdfReader
 
-from nllegalcit.citations import Citation, KamerstukCitation
-from nllegalcit.visitors import CitationVisitor, CitationVisitorOnlyKamerstukCitations
+from .citations import Citation, KamerstukCitation
+from .visitors import CitationVisitor, CitationVisitorOnlyKamerstukCitations
 
 parser = Lark.open(
     "grammars/citations.lark",

@@ -16,8 +16,7 @@
 
 import unittest
 
-from nllegalcit.citations import KamerstukCitation
-from nllegalcit.parser import parse_kamerstukcitation
+from nllegalcit import KamerstukCitation, parse_kamerstukcitation
 
 
 class KamerstukCitationTests(unittest.TestCase):

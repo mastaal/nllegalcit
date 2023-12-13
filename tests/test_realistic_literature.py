@@ -14,8 +14,7 @@
 
 import unittest
 
-from nllegalcit.citations import KamerstukCitation, EcliCitation
-from nllegalcit.parser import parse_citations_from_pdf_url
+from nllegalcit import KamerstukCitation, EcliCitation, parse_citations_from_pdf_url
 
 
 class RealisticLiteratureTests(unittest.TestCase):
