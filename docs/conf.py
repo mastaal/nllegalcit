@@ -34,5 +34,11 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'alabaster'
+html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
+html_context = {
+  'display_github': True,
+  'github_user': 'mastaal',
+  'github_repo': 'nllegalcit',
+  'github_version': 'main/docs/',
+}

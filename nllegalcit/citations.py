@@ -13,8 +13,9 @@ from typing import Optional
 
 
 class Citation():
-    """Generic citation"""
+    """Base Citation class"""
 
+    #: The underlying text that resulted in this Citation.
     matched_text: str
 
 
@@ -25,8 +26,12 @@ class CaseLawCitation(Citation):
 class EcliCitation(CaseLawCitation):
     """Case law Citation for ECLI-citations"""
 
+    #: The country code in this ECLI, e.g. NL, DE, FR, EU, CE.
     country: str
+
+    #: The ECLI abbreviation for the court or body.
     court: str
+
     year: int
     casenumber: str
 

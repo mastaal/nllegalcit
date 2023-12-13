@@ -7,7 +7,7 @@ geared towards citations for Dutch case law.
 
 Paragraph information from citations is currently not yet parsed.
 
-.. autoclass:: nllegalcit.citations.CaseLawCitation
+.. autoclass:: nllegalcit.CaseLawCitation
 
 
 ECLI-based case law citations
@@ -17,4 +17,4 @@ For ECLI-based case law citations, the current implementation is lax for Dutch c
 
 For other case law citations, nllegalcit will only recognize them if they are strictly according to the ECLI standard.
 
-.. autoclass:: nllegalcit.citations.EcliCitation
+.. autoclass:: nllegalcit.EcliCitation

@@ -18,4 +18,5 @@ build
 
 Jinja2
 sphinx
+sphinx-rtd-theme
 myst-parser

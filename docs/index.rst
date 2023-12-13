@@ -25,9 +25,10 @@ Supported citation types
 The following types of citations are implemented, work in progress, or planned:
 
 .. csv-table::
+   :widths: 30, 20, 50
    :header: Citation type, Implementation status, Implementation notes
 
-   "Kamerstukken (Dutch parliamentary documents)", "⚠️ Work in progress", "Works reasonably well for modern (>1995) citations following the guidelines. Older citations may work. Simple page number notations work.."
+   "Kamerstukken (Dutch parliamentary documents)", "⚠️ Work in progress", "Works reasonably well for modern (>1995) citations following the guidelines. Older citations may work. Simple page number notations work."
    "Handelingen (Dutch parliamentary minutes)", "🗓️ Planned", ""
    "ECLI case law citations", "⚠️ Work in progress", "Seems to work, but more testing is needed. Paragraph information is not parsed."
    "Dutch case law other than ECLI", "🗓️ Planned", ""
@@ -41,21 +42,26 @@ General usage
 
 To find all supported citations in some string, we use the following general function:
 
-.. autofunction:: nllegalcit.parser.parse_citations
+.. autofunction:: nllegalcit.parse_citations
 
 This gives us a list of all recognized citations in the input:
 ::
 
-   >>> from nllegalcit.parser import parse_citations
+   >>> from nllegalcit import parse_citations
    >>> parse_citations("Kamerstukken I 1979/80, 15 516, nr. 42e, blz. 7")
    [Kamerstukken I 1979-1980, 15516, nr. 42e p. 7]
+
+Other specific parse functions also exist, for example to find citations in a PDF file,
+or to only find citations to Kamerstukken. For more information, please refer to :ref:`the API reference <nllegalcit_package>`.
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
+   performance.rst
    kamerstukken.rst
    caselaw.rst
+   nllegalcit API reference <nllegalcit.rst>
 
 
 
@@ -63,5 +69,5 @@ Indices and tables
 ==================
 
 * :ref:`genindex`
-* :ref:`modindex`
+.. * :ref:`modindex`
 * :ref:`search`
