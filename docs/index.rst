@@ -6,7 +6,7 @@
 Welcome to nllegalcit's documentation!
 ======================================
 
-nllegalcit is a Python (>=3.10) library to find citations to Dutch
+nllegalcit is a Python library to find citations to Dutch
 legal and parliamentary documents in natural language text.
 
 This library is partially based on the
@@ -19,26 +19,20 @@ citations in natural language text.
 **Please note that this library is currently under development.
 It will probably not work reliably.**
 
-Supported citation types
-------------------------
+Installation
+------------
 
-The following types of citations are implemented, work in progress, or planned:
+nllegalcit is currently built and tested for Python 3.10,
+using either the default CPython or the (much faster) PyPy runtime.
 
-.. csv-table::
-   :widths: 30, 20, 50
-   :header: Citation type, Implementation status, Implementation notes
+nllegalcit can be installed using pip:
 
-   "Kamerstukken (Dutch parliamentary documents)", "⚠️ Work in progress", "Works reasonably well for modern (>1995) citations following the guidelines. Older citations may work. Simple page number notations work."
-   "Handelingen (Dutch parliamentary minutes)", "🗓️ Planned", ""
-   "ECLI case law citations", "⚠️ Work in progress", "Seems to work, but more testing is needed. Paragraph information is not parsed."
-   "Dutch case law other than ECLI", "🗓️ Planned", ""
-   "Dutch national laws", "🗓️ Planned", ""
-   "Dutch treaties", "🗓️ Planned", ""
-   "Dutch local laws", "🗓️ Planned", ""
-   "EU laws", "🗓️ Planned", ""
+.. code:: bash
 
-General usage
--------------
+   $ pip install nllegalcit
+
+Using nllegalcit
+----------------
 
 To find all supported citations in some string, we use the following general function:
 
@@ -53,6 +47,46 @@ This gives us a list of all recognized citations in the input:
 
 Other specific parse functions also exist, for example to find citations in a PDF file,
 or to only find citations to Kamerstukken. For more information, please refer to :ref:`the API reference <nllegalcit_package>`.
+
+Features
+--------
+
+nllegalcit aims to provide a simple interface to find all supported citations in a text. At its core,
+nllegalcit consists of functions to parse a type of text (plaintext, PDF files, online PDF files, etc.),
+and specific Citation classes to describe the recognized citations.
+
+Only absolute citations are recognized. Detecting relative citations in a text is currently out of scope for
+nllegalcit.
+
+Supported citation types
+------------------------
+The following types of citations are implemented:
+
+- Kamerstukken (Dutch parliamentary documents) [⚠️ Work in progress]:
+   Works reasonably well for modern (>1995) citations following the guidelines. Older citations may work. Simple page number notations work.
+- ECLI case law [⚠️ Work in progress]:
+   Seems to work, but more testing is needed. Paragraph information is not parsed.
+
+The following types of citations are not yet implemented, but are planned:
+
+- Handelingen (Dutch parliamentary minutes)
+- Dutch case law other than ECLI
+- Dutch national laws
+- Dutch treaties
+- Dutch local laws
+- EU laws
+
+License and copyright
+---------------------
+
+Copyright (c) 2023 Martijn Staal <nllegalcit [a t ] martijn-staal.nl>
+
+Available under the European Union Public License v1.2 (EUPL-1.2), or, at your option, any later version.
+
+Issues
+------
+
+Please file any issues you may have in `GitHub <https://github.com/mastaal/nllegalcit/issues>`_.
 
 .. toctree::
    :maxdepth: 2

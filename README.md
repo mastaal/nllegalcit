@@ -6,7 +6,7 @@
 [![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/mastaal/nllegalcit/mypy.yml?label=type%20checking)](https://github.com/mastaal/nllegalcit/actions/workflows/mypy.yml)
 
 
-Python library to find citations to Dutch legal documents in natural language text.
+A Python library to find citations to Dutch legal documents in natural language text.
 
 This library is partially based on the [linkextractor](https://gitlab.com/koop/ld/lx/linkextractor) developed by [KOOP](https://www.koopoverheid.nl/) to implement the Linked Data Overheid (LiDO). The aim of `nllegalcit` is to provide a more generally accessible way to recognize Dutch legal citations in natural language text.
 
