@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "nllegalcit"
-version = "0.0.2"
+version = "0.0.3"
 authors = [
     { name="Martijn Staal", email="nllegalcit@martijn-staal.nl" },
 ]

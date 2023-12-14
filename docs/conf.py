@@ -15,7 +15,7 @@ autodoc_member_order = 'bysource'
 project = 'nllegalcit'
 copyright = '2023, Martijn Staal'
 author = 'Martijn Staal'
-release = '0.0.2'
+release = '0.0.3'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
