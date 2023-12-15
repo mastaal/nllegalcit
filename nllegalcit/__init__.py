@@ -10,7 +10,7 @@
 
 # mypy: disable-error-code="name-defined"
 
-from .citations import Citation, CaseLawCitation, EcliCitation, KamerstukCitation
+from .citations import Citation, CaseLawCitation, LjnCitation, EcliCitation, KamerstukCitation
 from .parser import parse_citations, parse_citations_from_pdf, parse_citations_from_pdf_url, parse_kamerstukcitation
 from .errors import CitationParseException
 from .utils import ecli_citation_from_correct_string

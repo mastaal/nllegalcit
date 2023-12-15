@@ -13,10 +13,11 @@ from typing import Optional
 
 from lark import Visitor, ParseTree, Token, Tree
 
-from .citations import Citation, KamerstukCitation, CaseLawCitation, EcliCitation
+from .citations import Citation, KamerstukCitation, CaseLawCitation, EcliCitation, LjnCitation
 from .errors import CitationParseException
 from .utils import normalize_nl_ecli_court, lark_tree_to_str
 
+re_whitespace: re.Pattern = re.compile(r"\s+")
 re_dossiernummer_separator: re.Pattern = re.compile(r"[-.\s]+")
 re_replacement_toevoeging_separator: re.Pattern = re.compile(r"[.\s-]+")
 
@@ -122,6 +123,16 @@ class CaseLawCitationVisitor(Visitor):
                     casenumber = str(child)
 
         self.citation = EcliCitation(country, court, year, casenumber)
+
+    def caselaw__ljn(self, tree: ParseTree):
+        code: str
+
+        for child in tree.children:
+            if isinstance(child, Token):
+                if child.type == "caselaw__LJN_CONTENT":
+                    code = re_whitespace.sub("", str(child).upper())
+
+        self.citation = LjnCitation(code)
 
 
 class KamerstukCitationVisitor(Visitor):

@@ -23,8 +23,32 @@ class CaseLawCitation(Citation):
     """Generic citation to case law"""
 
 
+class LjnCitation(CaseLawCitation):
+    """CaseLawCitation for LJN citations"""
+
+    #: The LJN code, e.g. AU9722
+    code: str
+
+    def __init__(self, code: str):
+        self.code = code
+
+    def __str__(self) -> str:
+        return f"LJN {self.code}"
+
+    def __repr__(self) -> str:
+        return self.__str__()
+
+    def __eq__(self, __value: object) -> bool:
+        if isinstance(__value, LjnCitation):
+            return self.code == __value.code
+        else:
+            return False
+
+    # TODO: Implement a translation/lookup to EcliCitation
+
+
 class EcliCitation(CaseLawCitation):
-    """Case law Citation for ECLI-citations"""
+    """CaseLawCitation for ECLI-citations"""
 
     #: The country code in this ECLI, e.g. NL, DE, FR, EU, CE.
     country: str

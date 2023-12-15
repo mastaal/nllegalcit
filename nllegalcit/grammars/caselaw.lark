@@ -5,7 +5,9 @@
 // This is essentially a (customized) Lark-translation from the (EUPL-1.2 licensed) Waxeye grammar used by
 // KOOP, which can be found here: https://gitlab.com/koop/ld/lx/linkextractor/-/tree/main/src/webapp/links/grammars (specifically, the 'jur-citatie' grammars)
 
-case_law: nl_ecli | eu_ecli | ce_ecli | other_ecli
+case_law: case_law_ecli | ljn
+
+case_law_ecli: nl_ecli | eu_ecli | ce_ecli | other_ecli
 
 // ECLI case law citations
 
@@ -41,5 +43,13 @@ other_ecli: ECLI_START ECLI_SEPARATOR OTHER_ECLI_COUNTRY_CODE ECLI_SEPARATOR OTH
 OTHER_ECLI_COUNTRY_CODE: "EP" | "CZ" | "DE" | "ES" | "FR" | "IT" | "AT" | "SI" | "SK" | "FI" | "BE" | "BG" | "DK" | "EE" | "IE" | "EL" | "HR" | "CY" | "LV" | "LT" | "LU" | "HU" | "MT" | "PL" | "PT" | "RO" | "SE" | "UK"
 OTHER_ECLI_COURT: /[a-zA-Z][a-zA-Z0-9]*/
 OTHER_ECLI_CASENUMBER: /[a-zA-Z0-9][a-zA-Z0-9.]*/
+
+// LJN case law citations
+// LJN was the "Landelijk Jurisprudentie Nummer" (National Jurisprudence Number), which was used before the
+// introduction of ECLI up until 2013. See further https://nl.wikipedia.org/wiki/Landelijk_Jurisprudentie_Nummer
+
+ljn: LJN_LABEL_RE LJN_CONTENT
+LJN_LABEL_RE: /(LJN?|ELRO)/i (WS | "-")? (/N(UMME)?R/i)? (WS|/[:.=]/)+
+LJN_CONTENT: /[a-zA-Z]{2}/ WS? /[0-9]{4}/
 
 %import unicode.WS
