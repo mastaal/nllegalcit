@@ -20,3 +20,5 @@ Jinja2
 sphinx
 sphinx-rtd-theme
 myst-parser
+
+beautifulsoup4

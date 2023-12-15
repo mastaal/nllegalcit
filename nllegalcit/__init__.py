@@ -13,6 +13,7 @@
 from .citations import Citation, CaseLawCitation, EcliCitation, KamerstukCitation
 from .parser import parse_citations, parse_citations_from_pdf, parse_citations_from_pdf_url, parse_kamerstukcitation
 from .errors import CitationParseException
+from .utils import ecli_citation_from_correct_string
 
 del visitors  # pylint: disable=undefined-variable
 del errors  # pylint: disable=undefined-variable

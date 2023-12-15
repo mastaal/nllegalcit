@@ -10,6 +10,8 @@
 
 from lark import Tree, Token
 
+from .citations import EcliCitation
+
 
 def normalize_nl_ecli_court(court: str) -> str:
     """Normalize the formatting for Dutch ECLI court notations"""
@@ -35,3 +37,15 @@ def lark_tree_to_str(tree: Tree) -> str:
             text += lark_tree_to_str(c)
 
     return text
+
+
+def ecli_citation_from_correct_string(ecli: str) -> EcliCitation:
+    """Create an EcliCitation from a (presumed correct) ECLI in a string."""
+
+    ecli_split = ecli.split(":")
+    return EcliCitation(
+        ecli_split[1],
+        ecli_split[2],
+        int(ecli_split[3]),
+        ecli_split[4]
+    )
