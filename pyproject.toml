@@ -12,6 +12,7 @@ description = "Python library to find citations to Dutch legal documents in natu
 readme = "README.md"
 requires-python = ">=3.10"
 classifiers = [
+    "Development Status :: 3 - Alpha",
     "Programming Language :: Python :: 3 :: Only",
     "License :: OSI Approved :: European Union Public Licence 1.2 (EUPL 1.2)",
     "Intended Audience :: Legal Industry",
@@ -27,6 +28,7 @@ dependencies = [
 [project.urls]
 Homepage = "https://github.com/mastaal/nllegalcit"
 Issues = "https://github.com/mastaal/nllegalcit/issues"
+Documentation = "https://nllegalcit.martijn-staal.nl/latest"
 
 [tool.setuptools]
 include-package-data = true
